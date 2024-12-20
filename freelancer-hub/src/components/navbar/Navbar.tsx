@@ -13,7 +13,7 @@ import {
   useTheme,
   useMediaQuery
 } from '@mui/material';
-import { Link as RouterLink } from 'react-router-dom';
+import { Link as RouterLink, useLocation } from 'react-router-dom';
 import NotificationsIcon from '@mui/icons-material/Notifications';
 import MenuIcon from '@mui/icons-material/Menu';
 import { mockNotifications } from '../../data/mockNotifications';
@@ -27,6 +27,14 @@ const Navbar = () => {
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
   const theme = useTheme();
   const isMobileOrTablet = useMediaQuery(theme.breakpoints.down('lg'));
+  const location = useLocation();
+
+  const isActive = (path: string) => {
+    if (path === '/') {
+      return location.pathname === '/';
+    }
+    return location.pathname.startsWith(path);
+  };
 
   const handleClick = (event: React.MouseEvent<HTMLElement>) => {
     setAnchorEl(event.currentTarget);
@@ -98,7 +106,7 @@ const Navbar = () => {
               <Typography variant="h6" sx={{ 
                 color: '#6366F1', 
                 fontWeight: 700, 
-                fontSize: { xs: '1.25rem', lg: '1.5rem' }
+                fontSize: 24
               }}>
                 Freelancer Hub
               </Typography>
@@ -125,9 +133,20 @@ const Navbar = () => {
                       color: '#1a1a1a',
                       px: 2,
                       py: 1,
-                      fontSize: '0.875rem',
-                      fontWeight: 500,
+                      fontSize: 18,
+                      fontWeight: isActive(link.path) ? 700 : 500,
                       minWidth: 'auto',
+                      position: 'relative',
+                      '&::after': {
+                        content: '""',
+                        position: 'absolute',
+                        bottom: 0,
+                        left: 0,
+                        width: '100%',
+                        height: '2px',
+                        bgcolor: '#6366F1',
+                        display: isActive(link.path) ? 'block' : 'none'
+                      },
                       '&:hover': {
                         color: '#6366F1',
                         bgcolor: 'rgba(99, 102, 241, 0.04)',
