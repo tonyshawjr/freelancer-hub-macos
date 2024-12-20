@@ -57,7 +57,9 @@ const NotificationDrawer: React.FC<NotificationDrawerProps> = ({
         p: 2.5,
         display: 'flex',
         alignItems: 'center',
-        justifyContent: 'space-between'
+        justifyContent: 'space-between',
+        borderBottom: '1px solid',
+        borderColor: 'divider'
       }}>
         <Typography variant="h6" sx={{ 
           fontWeight: 600,
@@ -76,7 +78,7 @@ const NotificationDrawer: React.FC<NotificationDrawerProps> = ({
           <CloseIcon />
         </IconButton>
       </Box>
-      
+
       <List sx={{ p: 0 }}>
         {notifications.map((notification) => (
           <React.Fragment key={notification.id}>

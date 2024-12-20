@@ -19,6 +19,10 @@ import Invoices from './pages/Invoices';
 import CreateInvoice from './pages/CreateInvoice';
 import InvoiceDetail from './pages/InvoiceDetail';
 import Settings from './pages/Settings';
+import Tickets from './pages/Tickets';
+import Messages from './pages/Messages';
+import Profile from './pages/Profile';
+import Notifications from './pages/Notifications';
 
 function App() {
   return (
@@ -35,6 +39,10 @@ function App() {
                 <Route path="/projects" element={<Projects />} />
                 <Route path="/projects/new" element={<CreateProject />} />
                 <Route path="/projects/:id" element={<ProjectDetail />} />
+                <Route path="/tickets" element={<Tickets />} />
+                <Route path="/messages" element={<Messages />} />
+                <Route path="/profile" element={<Profile />} />
+                <Route path="/notifications" element={<Notifications />} />
                 <Route path="/clients" element={<Clients />} />
                 <Route path="/clients/new" element={<CreateClient />} />
                 <Route path="/clients/:id" element={<ClientDetail />} />
