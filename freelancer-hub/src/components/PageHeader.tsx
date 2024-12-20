@@ -13,7 +13,7 @@ interface PageHeaderProps {
   };
 }
 
-const PageHeader: React.FC<PageHeaderProps> = ({ title, subtitle, icon: Icon, action }) => {
+export const PageHeader: React.FC<PageHeaderProps> = ({ title, subtitle, icon: Icon, action }) => {
   return (
     <Box 
       sx={{ 
@@ -28,7 +28,7 @@ const PageHeader: React.FC<PageHeaderProps> = ({ title, subtitle, icon: Icon, ac
           <Icon
             size={32}
             style={{ 
-              color: theme => theme.palette.text.primary,
+              color: 'text.primary',
               opacity: 0.8
             }}
           />
@@ -36,17 +36,19 @@ const PageHeader: React.FC<PageHeaderProps> = ({ title, subtitle, icon: Icon, ac
         <Box>
           <Typography 
             variant="h4" 
+            component="h1"
             sx={{ 
               fontWeight: 'bold',
               color: 'text.primary',
-              lineHeight: 1.2
+              lineHeight: 1.2,
+              mb: 1
             }}
           >
             {title}
           </Typography>
           {subtitle && (
             <Typography 
-              variant="body2"
+              variant="subtitle1"
               sx={{ 
                 mt: 0.5,
                 color: 'text.secondary'

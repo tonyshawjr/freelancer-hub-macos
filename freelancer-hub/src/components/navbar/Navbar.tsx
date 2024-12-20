@@ -22,10 +22,9 @@ import MobileMenu from './MobileMenu';
 import UserMenu from './UserMenu';
 
 const Navbar = () => {
-  const [anchorEl, setAnchorEl] = useState<null | HTMLElement>(null);
+  const [anchorEl, setAnchorEl] = React.useState<null | HTMLElement>(null);
   const [notificationsOpen, setNotificationsOpen] = useState(false);
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
-  const open = Boolean(anchorEl);
   const theme = useTheme();
   const isMobileOrTablet = useMediaQuery(theme.breakpoints.down('lg'));
 
@@ -46,7 +45,8 @@ const Navbar = () => {
   };
 
   const handleLogout = () => {
-    // Implement logout logic
+    // Handle logout logic here
+    handleClose();
   };
 
   const unreadCount = mockNotifications.filter(n => !n.read).length;
@@ -215,11 +215,10 @@ const Navbar = () => {
 
             <UserMenu
               anchorEl={anchorEl}
-              open={open}
+              open={Boolean(anchorEl)}
               onClose={handleClose}
               onLogout={handleLogout}
               userName="Tony Shaw"
-              userAvatar="https://images.unsplash.com/photo-1472099645785-5658abf4ff4e?ixlib=rb-1.2.1&auto=format&fit=facearea&facepad=2&w=256&h=256&q=80"
             />
           </Stack>
         </Toolbar>

@@ -1,0 +1,17 @@
+/Users/tonyshaw/Documents/Little Big Planet/Freelancer Hub MacOS/freelancer-hub/src-tauri/target/debug/deps/libunic_char_range-0eb181bdabb1fb99.rmeta: /Users/tonyshaw/.cargo/registry/src/index.crates.io-6f17d22bba15001f/unic-char-range-0.9.0/src/lib.rs /Users/tonyshaw/.cargo/registry/src/index.crates.io-6f17d22bba15001f/unic-char-range-0.9.0/src/pkg_info.rs /Users/tonyshaw/.cargo/registry/src/index.crates.io-6f17d22bba15001f/unic-char-range-0.9.0/src/iter.rs /Users/tonyshaw/.cargo/registry/src/index.crates.io-6f17d22bba15001f/unic-char-range-0.9.0/src/range.rs /Users/tonyshaw/.cargo/registry/src/index.crates.io-6f17d22bba15001f/unic-char-range-0.9.0/src/macros.rs /Users/tonyshaw/.cargo/registry/src/index.crates.io-6f17d22bba15001f/unic-char-range-0.9.0/src/step.rs /Users/tonyshaw/.cargo/registry/src/index.crates.io-6f17d22bba15001f/unic-char-range-0.9.0/src/iter_fused.rs
+
+/Users/tonyshaw/Documents/Little Big Planet/Freelancer Hub MacOS/freelancer-hub/src-tauri/target/debug/deps/libunic_char_range-0eb181bdabb1fb99.rlib: /Users/tonyshaw/.cargo/registry/src/index.crates.io-6f17d22bba15001f/unic-char-range-0.9.0/src/lib.rs /Users/tonyshaw/.cargo/registry/src/index.crates.io-6f17d22bba15001f/unic-char-range-0.9.0/src/pkg_info.rs /Users/tonyshaw/.cargo/registry/src/index.crates.io-6f17d22bba15001f/unic-char-range-0.9.0/src/iter.rs /Users/tonyshaw/.cargo/registry/src/index.crates.io-6f17d22bba15001f/unic-char-range-0.9.0/src/range.rs /Users/tonyshaw/.cargo/registry/src/index.crates.io-6f17d22bba15001f/unic-char-range-0.9.0/src/macros.rs /Users/tonyshaw/.cargo/registry/src/index.crates.io-6f17d22bba15001f/unic-char-range-0.9.0/src/step.rs /Users/tonyshaw/.cargo/registry/src/index.crates.io-6f17d22bba15001f/unic-char-range-0.9.0/src/iter_fused.rs
+
+/Users/tonyshaw/Documents/Little Big Planet/Freelancer Hub MacOS/freelancer-hub/src-tauri/target/debug/deps/unic_char_range-0eb181bdabb1fb99.d: /Users/tonyshaw/.cargo/registry/src/index.crates.io-6f17d22bba15001f/unic-char-range-0.9.0/src/lib.rs /Users/tonyshaw/.cargo/registry/src/index.crates.io-6f17d22bba15001f/unic-char-range-0.9.0/src/pkg_info.rs /Users/tonyshaw/.cargo/registry/src/index.crates.io-6f17d22bba15001f/unic-char-range-0.9.0/src/iter.rs /Users/tonyshaw/.cargo/registry/src/index.crates.io-6f17d22bba15001f/unic-char-range-0.9.0/src/range.rs /Users/tonyshaw/.cargo/registry/src/index.crates.io-6f17d22bba15001f/unic-char-range-0.9.0/src/macros.rs /Users/tonyshaw/.cargo/registry/src/index.crates.io-6f17d22bba15001f/unic-char-range-0.9.0/src/step.rs /Users/tonyshaw/.cargo/registry/src/index.crates.io-6f17d22bba15001f/unic-char-range-0.9.0/src/iter_fused.rs
+
+/Users/tonyshaw/.cargo/registry/src/index.crates.io-6f17d22bba15001f/unic-char-range-0.9.0/src/lib.rs:
+/Users/tonyshaw/.cargo/registry/src/index.crates.io-6f17d22bba15001f/unic-char-range-0.9.0/src/pkg_info.rs:
+/Users/tonyshaw/.cargo/registry/src/index.crates.io-6f17d22bba15001f/unic-char-range-0.9.0/src/iter.rs:
+/Users/tonyshaw/.cargo/registry/src/index.crates.io-6f17d22bba15001f/unic-char-range-0.9.0/src/range.rs:
+/Users/tonyshaw/.cargo/registry/src/index.crates.io-6f17d22bba15001f/unic-char-range-0.9.0/src/macros.rs:
+/Users/tonyshaw/.cargo/registry/src/index.crates.io-6f17d22bba15001f/unic-char-range-0.9.0/src/step.rs:
+/Users/tonyshaw/.cargo/registry/src/index.crates.io-6f17d22bba15001f/unic-char-range-0.9.0/src/iter_fused.rs:
+
+# env-dep:CARGO_PKG_DESCRIPTION=UNIC — Unicode Character Tools — Character Range and Iteration
+# env-dep:CARGO_PKG_NAME=unic-char-range
+# env-dep:CARGO_PKG_VERSION=0.9.0

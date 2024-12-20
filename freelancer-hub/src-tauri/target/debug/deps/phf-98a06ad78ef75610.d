@@ -1,0 +1,11 @@
+/Users/tonyshaw/Documents/Little Big Planet/Freelancer Hub MacOS/freelancer-hub/src-tauri/target/debug/deps/libphf-98a06ad78ef75610.rmeta: /Users/tonyshaw/.cargo/registry/src/index.crates.io-6f17d22bba15001f/phf-0.11.2/src/lib.rs /Users/tonyshaw/.cargo/registry/src/index.crates.io-6f17d22bba15001f/phf-0.11.2/src/map.rs /Users/tonyshaw/.cargo/registry/src/index.crates.io-6f17d22bba15001f/phf-0.11.2/src/ordered_map.rs /Users/tonyshaw/.cargo/registry/src/index.crates.io-6f17d22bba15001f/phf-0.11.2/src/ordered_set.rs /Users/tonyshaw/.cargo/registry/src/index.crates.io-6f17d22bba15001f/phf-0.11.2/src/set.rs
+
+/Users/tonyshaw/Documents/Little Big Planet/Freelancer Hub MacOS/freelancer-hub/src-tauri/target/debug/deps/libphf-98a06ad78ef75610.rlib: /Users/tonyshaw/.cargo/registry/src/index.crates.io-6f17d22bba15001f/phf-0.11.2/src/lib.rs /Users/tonyshaw/.cargo/registry/src/index.crates.io-6f17d22bba15001f/phf-0.11.2/src/map.rs /Users/tonyshaw/.cargo/registry/src/index.crates.io-6f17d22bba15001f/phf-0.11.2/src/ordered_map.rs /Users/tonyshaw/.cargo/registry/src/index.crates.io-6f17d22bba15001f/phf-0.11.2/src/ordered_set.rs /Users/tonyshaw/.cargo/registry/src/index.crates.io-6f17d22bba15001f/phf-0.11.2/src/set.rs
+
+/Users/tonyshaw/Documents/Little Big Planet/Freelancer Hub MacOS/freelancer-hub/src-tauri/target/debug/deps/phf-98a06ad78ef75610.d: /Users/tonyshaw/.cargo/registry/src/index.crates.io-6f17d22bba15001f/phf-0.11.2/src/lib.rs /Users/tonyshaw/.cargo/registry/src/index.crates.io-6f17d22bba15001f/phf-0.11.2/src/map.rs /Users/tonyshaw/.cargo/registry/src/index.crates.io-6f17d22bba15001f/phf-0.11.2/src/ordered_map.rs /Users/tonyshaw/.cargo/registry/src/index.crates.io-6f17d22bba15001f/phf-0.11.2/src/ordered_set.rs /Users/tonyshaw/.cargo/registry/src/index.crates.io-6f17d22bba15001f/phf-0.11.2/src/set.rs
+
+/Users/tonyshaw/.cargo/registry/src/index.crates.io-6f17d22bba15001f/phf-0.11.2/src/lib.rs:
+/Users/tonyshaw/.cargo/registry/src/index.crates.io-6f17d22bba15001f/phf-0.11.2/src/map.rs:
+/Users/tonyshaw/.cargo/registry/src/index.crates.io-6f17d22bba15001f/phf-0.11.2/src/ordered_map.rs:
+/Users/tonyshaw/.cargo/registry/src/index.crates.io-6f17d22bba15001f/phf-0.11.2/src/ordered_set.rs:
+/Users/tonyshaw/.cargo/registry/src/index.crates.io-6f17d22bba15001f/phf-0.11.2/src/set.rs:

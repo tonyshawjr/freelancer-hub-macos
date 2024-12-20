@@ -6,7 +6,6 @@ import {
   Typography,
   Divider,
   Box,
-  Avatar,
 } from '@mui/material';
 import { Link as RouterLink } from 'react-router-dom';
 import PersonIcon from '@mui/icons-material/Person';
@@ -19,7 +18,6 @@ interface UserMenuProps {
   onClose: () => void;
   onLogout: () => void;
   userName: string;
-  userAvatar: string;
 }
 
 const UserMenu: React.FC<UserMenuProps> = ({
@@ -27,8 +25,7 @@ const UserMenu: React.FC<UserMenuProps> = ({
   open,
   onClose,
   onLogout,
-  userName,
-  userAvatar
+  userName
 }) => {
   return (
     <Menu

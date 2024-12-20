@@ -1,0 +1,10 @@
+/Users/tonyshaw/Documents/Little Big Planet/Freelancer Hub MacOS/freelancer-hub/src-tauri/target/debug/deps/libthiserror-f5e231ee72c8d603.rmeta: /Users/tonyshaw/.cargo/registry/src/index.crates.io-6f17d22bba15001f/thiserror-2.0.8/src/lib.rs /Users/tonyshaw/.cargo/registry/src/index.crates.io-6f17d22bba15001f/thiserror-2.0.8/src/aserror.rs /Users/tonyshaw/.cargo/registry/src/index.crates.io-6f17d22bba15001f/thiserror-2.0.8/src/display.rs /Users/tonyshaw/.cargo/registry/src/index.crates.io-6f17d22bba15001f/thiserror-2.0.8/src/var.rs
+
+/Users/tonyshaw/Documents/Little Big Planet/Freelancer Hub MacOS/freelancer-hub/src-tauri/target/debug/deps/libthiserror-f5e231ee72c8d603.rlib: /Users/tonyshaw/.cargo/registry/src/index.crates.io-6f17d22bba15001f/thiserror-2.0.8/src/lib.rs /Users/tonyshaw/.cargo/registry/src/index.crates.io-6f17d22bba15001f/thiserror-2.0.8/src/aserror.rs /Users/tonyshaw/.cargo/registry/src/index.crates.io-6f17d22bba15001f/thiserror-2.0.8/src/display.rs /Users/tonyshaw/.cargo/registry/src/index.crates.io-6f17d22bba15001f/thiserror-2.0.8/src/var.rs
+
+/Users/tonyshaw/Documents/Little Big Planet/Freelancer Hub MacOS/freelancer-hub/src-tauri/target/debug/deps/thiserror-f5e231ee72c8d603.d: /Users/tonyshaw/.cargo/registry/src/index.crates.io-6f17d22bba15001f/thiserror-2.0.8/src/lib.rs /Users/tonyshaw/.cargo/registry/src/index.crates.io-6f17d22bba15001f/thiserror-2.0.8/src/aserror.rs /Users/tonyshaw/.cargo/registry/src/index.crates.io-6f17d22bba15001f/thiserror-2.0.8/src/display.rs /Users/tonyshaw/.cargo/registry/src/index.crates.io-6f17d22bba15001f/thiserror-2.0.8/src/var.rs
+
+/Users/tonyshaw/.cargo/registry/src/index.crates.io-6f17d22bba15001f/thiserror-2.0.8/src/lib.rs:
+/Users/tonyshaw/.cargo/registry/src/index.crates.io-6f17d22bba15001f/thiserror-2.0.8/src/aserror.rs:
+/Users/tonyshaw/.cargo/registry/src/index.crates.io-6f17d22bba15001f/thiserror-2.0.8/src/display.rs:
+/Users/tonyshaw/.cargo/registry/src/index.crates.io-6f17d22bba15001f/thiserror-2.0.8/src/var.rs:

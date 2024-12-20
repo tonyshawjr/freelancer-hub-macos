@@ -5,5 +5,5 @@ export interface Notification {
   message: string;
   time: string;
   read: boolean;
-  icon: JSX.Element;
+  icon?: React.ReactNode;
 }
