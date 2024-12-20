@@ -1,56 +1,139 @@
 import React from 'react';
-import { AppBar, Toolbar, Box, Button } from '@mui/material';
-import { Add as AddIcon } from '@mui/icons-material';
-import { useNavigate } from 'react-router-dom';
+import {
+  AppBar,
+  Box,
+  IconButton,
+  Stack,
+  Toolbar,
+  Typography,
+  Button,
+} from '@mui/material';
+import { useLocation, useNavigate } from 'react-router-dom';
+import MenuIcon from '@mui/icons-material/Menu';
+import NotificationsIcon from '@mui/icons-material/Notifications';
+import AccountCircleIcon from '@mui/icons-material/AccountCircle';
 import SearchBar from './SearchBar';
 
 interface TopBarProps {
-  sidebarWidth: number;
+  onSidebarOpen: () => void;
 }
 
-const TopBar: React.FC<TopBarProps> = ({ sidebarWidth }) => {
+const TopBar: React.FC<TopBarProps> = ({ onSidebarOpen }) => {
   const navigate = useNavigate();
+  const location = useLocation();
 
-  const handleNewProject = () => {
-    navigate('/projects/new');
+  const menuItems = [
+    { label: 'Dashboard', path: '/' },
+    { label: 'Tickets', path: '/tickets' },
+    { label: 'Projects', path: '/projects' },
+    { label: 'Clients', path: '/clients' },
+  ];
+
+  const isActive = (path: string) => {
+    if (path === '/') {
+      return location.pathname === '/';
+    }
+    return location.pathname.startsWith(path);
   };
 
   return (
-    <AppBar 
-      position="fixed" 
-      sx={{ 
-        ml: `${sidebarWidth}px`, 
-        width: `calc(100% - ${sidebarWidth}px)`,
-        boxShadow: 'none',
+    <AppBar
+      elevation={0}
+      sx={{
+        backgroundColor: 'background.paper',
+        color: 'text.primary',
         borderBottom: '1px solid',
         borderColor: 'divider',
-        bgcolor: 'background.paper',
       }}
     >
-      <Toolbar sx={{ 
-        justifyContent: 'space-between',
-        gap: 2,
-        px: { xs: 2, sm: 3 }
-      }}>
-        <SearchBar />
+      <Toolbar sx={{ minHeight: 70 }}>
+        <IconButton
+          color="inherit"
+          onClick={onSidebarOpen}
+          sx={{ display: { lg: 'none' }, mr: 2 }}
+        >
+          <MenuIcon />
+        </IconButton>
 
-        <Box sx={{ display: 'flex', gap: 2, alignItems: 'center' }}>
-          <Button
-            variant="contained"
-            startIcon={<AddIcon />}
-            onClick={handleNewProject}
-            sx={{
-              bgcolor: 'primary.main',
-              color: 'white',
-              '&:hover': {
-                bgcolor: 'primary.dark',
-              },
-              whiteSpace: 'nowrap',
+        <Typography
+          variant="h5"
+          sx={{
+            fontWeight: 700,
+            color: 'primary.main',
+            cursor: 'pointer',
+            fontSize: 18
+          }}
+          onClick={() => navigate('/')}
+        >
+          Freelancer Hub
+        </Typography>
+
+        {/* Navigation Menu */}
+        <Stack
+          direction="row"
+          spacing={1}
+          sx={{
+            ml: 6,
+            display: { xs: 'none', md: 'flex' }
+          }}
+        >
+          {menuItems.map((item) => (
+            <Button
+              key={item.path}
+              onClick={() => navigate(item.path)}
+              sx={{
+                px: 3,
+                py: 2.5,
+                fontSize: 18,
+                color: 'text.primary',
+                fontWeight: isActive(item.path) ? 700 : 500,
+                borderBottom: isActive(item.path) ? '3px solid' : '3px solid transparent',
+                borderColor: isActive(item.path) ? 'primary.main' : 'transparent',
+                borderRadius: 0,
+                '&:hover': {
+                  backgroundColor: 'rgba(0, 0, 0, 0.04)',
+                  borderBottom: '3px solid',
+                  borderColor: isActive(item.path) ? 'primary.main' : 'divider',
+                }
+              }}
+            >
+              {item.label}
+            </Button>
+          ))}
+        </Stack>
+
+        <Box sx={{ flexGrow: 1 }} />
+
+        <Stack
+          direction="row"
+          spacing={2}
+          alignItems="center"
+          sx={{ ml: 2 }}
+        >
+          <SearchBar />
+          <IconButton 
+            sx={{ 
+              width: 45, 
+              height: 45,
+              '& .MuiSvgIcon-root': {
+                fontSize: 28
+              }
             }}
           >
-            New Project
-          </Button>
-        </Box>
+            <NotificationsIcon />
+          </IconButton>
+          <IconButton 
+            sx={{ 
+              width: 45, 
+              height: 45,
+              '& .MuiSvgIcon-root': {
+                fontSize: 28
+              }
+            }}
+          >
+            <AccountCircleIcon />
+          </IconButton>
+        </Stack>
       </Toolbar>
     </AppBar>
   );
