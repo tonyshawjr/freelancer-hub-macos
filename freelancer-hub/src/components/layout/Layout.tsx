@@ -11,7 +11,7 @@ const Layout: React.FC<LayoutProps> = ({ children }) => {
     <Box sx={{ 
       display: 'flex', 
       flexDirection: 'column',
-      minHeight: '100vh',
+      flex: 1,
       width: '100%',
       bgcolor: '#FFFFFF'
     }}>
@@ -22,24 +22,16 @@ const Layout: React.FC<LayoutProps> = ({ children }) => {
       <Box
         component="main"
         sx={{
-          flexGrow: 1,
+          flex: 1,
           width: '100%',
           display: 'flex',
           flexDirection: 'column',
-          bgcolor: '#FFFFFF'
+          bgcolor: '#FFFFFF',
+          overflowY: 'auto'
         }}
       >
         {/* Page Content */}
-        <Box 
-          sx={{ 
-            p: { xs: 2, sm: 3 },
-            maxWidth: '1600px',
-            width: '100%',
-            margin: '0 auto'
-          }}
-        >
-          {children}
-        </Box>
+        {children}
       </Box>
     </Box>
   );

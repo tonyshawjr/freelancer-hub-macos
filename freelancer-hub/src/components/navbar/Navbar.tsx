@@ -20,6 +20,7 @@ import { mockNotifications } from '../../data/mockNotifications';
 import NotificationDrawer from './NotificationDrawer';
 import MobileMenu from './MobileMenu';
 import UserMenu from './UserMenu';
+import { Logo } from '../common/Logo';
 
 const Navbar = () => {
   const [anchorEl, setAnchorEl] = React.useState<null | HTMLElement>(null);
@@ -62,25 +63,23 @@ const Navbar = () => {
   return (
     <AppBar 
       position="sticky" 
-      elevation={0} 
+      elevation={0}
       sx={{ 
-        bgcolor: 'white', 
+        bgcolor: 'background.paper',
         borderBottom: '1px solid',
         borderColor: 'divider',
-        borderRadius: 0,
-        '& .MuiToolbar-root': {
-          minHeight: { xs: 64, lg: 72 }
-        }
+        zIndex: (theme) => theme.zIndex.drawer + 1
       }}
     >
-      <Container maxWidth="lg">
-        <Toolbar 
-          disableGutters 
-          sx={{ 
-            display: 'flex',
-            justifyContent: 'space-between'
-          }}
-        >
+      <Box sx={{ width: '100%' }}>
+        <Toolbar sx={{ 
+          display: 'flex',
+          justifyContent: 'space-between',
+          minHeight: { xs: 64, sm: 70 },
+          width: '100%',
+          margin: '0 auto',
+          px: { xs: 2, sm: 3 }
+        }}>
           {/* Left section: Logo and Navigation */}
           <Stack 
             direction="row" 
@@ -97,19 +96,12 @@ const Navbar = () => {
               </IconButton>
             )}
             
-            <Box component={RouterLink} to="/" sx={{ 
-              textDecoration: 'none', 
-              display: 'flex', 
+            <Box sx={{
+              display: 'flex',
               alignItems: 'center',
               minWidth: 'fit-content'
             }}>
-              <Typography variant="h6" sx={{ 
-                color: '#6366F1', 
-                fontWeight: 700, 
-                fontSize: 24
-              }}>
-                Freelancer Hub
-              </Typography>
+              <Logo fontSize={24} />
             </Box>
 
             {!isMobileOrTablet && (
@@ -240,7 +232,7 @@ const Navbar = () => {
             />
           </Stack>
         </Toolbar>
-      </Container>
+      </Box>
 
       {/* Mobile Navigation Drawer */}
       <MobileMenu
