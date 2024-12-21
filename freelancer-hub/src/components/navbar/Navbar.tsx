@@ -135,16 +135,7 @@ const Navbar = () => {
                       fontWeight: isActive(link.path) ? 700 : 500,
                       minWidth: 'auto',
                       position: 'relative',
-                      '&::after': {
-                        content: '""',
-                        position: 'absolute',
-                        bottom: 0,
-                        left: 0,
-                        width: '100%',
-                        height: '2px',
-                        bgcolor: '#6366F1',
-                        display: isActive(link.path) ? 'block' : 'none'
-                      },
+                      bgcolor: isActive(link.path) ? 'rgba(99, 102, 241, 0.04)' : 'transparent',
                       '&:hover': {
                         color: '#6366F1',
                         bgcolor: 'rgba(99, 102, 241, 0.04)',
