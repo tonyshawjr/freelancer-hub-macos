@@ -1,5 +1,5 @@
 import React from 'react';
-import { Box, Grid, IconButton, Stack } from '@mui/material';
+import { Box, IconButton, Stack } from '@mui/material';
 import ArrowBackIcon from '@mui/icons-material/ArrowBack';
 import { useNavigate, useParams } from 'react-router-dom';
 
@@ -110,14 +110,14 @@ const TicketDetail: React.FC = () => {
           {/* Left Column */}
           <Stack spacing={3}>
             <TicketDescription ticket={mockTicket} />
-            <NotesThread notes={mockNotes} ticketId={mockTicket.id} />
+            <NotesThread notes={mockNotes} />
           </Stack>
 
           {/* Right Column */}
           <Stack spacing={3}>
             <QuickActions ticket={mockTicket} />
-            <FilesList files={mockFiles} ticketId={mockTicket.id} />
-            <ActivityLog activities={mockActivities} ticketId={mockTicket.id} />
+            <FilesList files={mockFiles} />
+            <ActivityLog activities={mockActivities} />
             <RelatedItems ticket={mockTicket} />
           </Stack>
         </Box>

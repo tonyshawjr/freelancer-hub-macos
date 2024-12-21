@@ -1,30 +1,12 @@
 import React from 'react';
-import { Box, Typography, Avatar, Stack, Chip } from '@mui/material';
+import { Box, Typography, Stack, Avatar, Chip } from '@mui/material';
 import { styled } from '@mui/material/styles';
-import AssignmentIcon from '@mui/icons-material/Assignment';
-import LabelIcon from '@mui/icons-material/Label';
-import AccessTimeIcon from '@mui/icons-material/AccessTime';
-import PriorityHighIcon from '@mui/icons-material/PriorityHigh';
 import PersonIcon from '@mui/icons-material/Person';
 import AttachFileIcon from '@mui/icons-material/AttachFile';
+import { Activity } from '../../../types/tickets';
 
 interface ActivityLogProps {
-  activities: Array<{
-    id: string;
-    type: string;
-    action: string;
-    user: {
-      name: string;
-      avatar: string;
-    };
-    timestamp: string;
-    details?: {
-      from?: string;
-      to?: string;
-      fileName?: string;
-      fileSize?: number;
-    };
-  }>;
+  activities: Activity[];
 }
 
 const ActivityItem = styled(Box)(({ theme }) => ({
@@ -84,7 +66,12 @@ const ActivityLog: React.FC<ActivityLogProps> = ({ activities }) => {
                       color: 'text.secondary'
                     }}
                   >
-                    {activity.timestamp}
+                    {new Date(activity.timestamp).toLocaleDateString('en-US', {
+                      month: 'short',
+                      day: 'numeric',
+                      hour: '2-digit',
+                      minute: '2-digit'
+                    })}
                   </Typography>
                 </Stack>
                 <Typography
@@ -103,36 +90,29 @@ const ActivityLog: React.FC<ActivityLogProps> = ({ activities }) => {
                           label={activity.details.from}
                           size="small"
                           sx={{
-                            backgroundColor: 'rgba(99, 102, 241, 0.08)',
-                            color: 'text.secondary'
+                            backgroundColor: 'error.lighter',
+                            color: 'error.main'
                           }}
                         />
-                        <Typography variant="body2" color="text.secondary">→</Typography>
+                        <Typography variant="body2">→</Typography>
                         <Chip
                           label={activity.details.to}
                           size="small"
                           sx={{
-                            backgroundColor: 'rgba(99, 102, 241, 0.08)',
-                            color: 'primary.main'
+                            backgroundColor: 'success.lighter',
+                            color: 'success.main'
                           }}
                         />
                       </Stack>
                     )}
                     {activity.details.fileName && (
-                      <Box sx={{ mt: 1 }}>
-                        <Chip
-                          icon={<AttachFileIcon fontSize="small" />}
-                          label={`${activity.details.fileName} (${activity.details.fileSize}KB)`}
-                          size="small"
-                          sx={{
-                            backgroundColor: 'rgba(99, 102, 241, 0.08)',
-                            color: 'primary.main',
-                            '& .MuiChip-icon': {
-                              color: 'primary.main'
-                            }
-                          }}
-                        />
-                      </Box>
+                      <Stack direction="row" spacing={1} alignItems="center" sx={{ mt: 1 }}>
+                        <AttachFileIcon sx={{ fontSize: 16, color: 'text.secondary' }} />
+                        <Typography variant="body2" color="text.secondary">
+                          {activity.details.fileName}
+                          {activity.details.fileSize && ` (${formatFileSize(activity.details.fileSize)})`}
+                        </Typography>
+                      </Stack>
                     )}
                   </Box>
                 )}
@@ -143,6 +123,14 @@ const ActivityLog: React.FC<ActivityLogProps> = ({ activities }) => {
       </Box>
     </Box>
   );
+};
+
+const formatFileSize = (bytes: number): string => {
+  if (bytes === 0) return '0 Bytes';
+  const k = 1024;
+  const sizes = ['Bytes', 'KB', 'MB', 'GB'];
+  const i = Math.floor(Math.log(bytes) / Math.log(k));
+  return `${parseFloat((bytes / Math.pow(k, i)).toFixed(2))} ${sizes[i]}`;
 };
 
 export default ActivityLog;

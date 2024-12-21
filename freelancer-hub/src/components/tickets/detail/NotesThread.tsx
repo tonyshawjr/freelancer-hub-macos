@@ -42,7 +42,7 @@ const FormatButton = styled(IconButton)(({ theme }) => ({
     color: theme.palette.primary.main,
   },
   '&.active': {
-    backgroundColor: theme.palette.primary.lighter,
+    backgroundColor: theme.palette.primary.light,
     color: theme.palette.primary.main,
   },
 }));
@@ -62,10 +62,10 @@ const NotesThread: React.FC<NotesThreadProps> = ({ notes }) => {
         formatText = '_italic text_';
         break;
       case 'list':
-        formatText = '- list item\\n';
+        formatText = '- list item\n';
         break;
       case 'code':
-        formatText = '\`code\`';
+        formatText = '`code`';
         break;
       default:
         formatText = '';
@@ -98,6 +98,16 @@ const NotesThread: React.FC<NotesThreadProps> = ({ notes }) => {
   const handleCancelEdit = () => {
     setEditingNoteId(null);
     setEditContent('');
+  };
+
+  const formatMarkdown = (text: string) => {
+    // Bold
+    text = text.replace(/\*\*(.*?)\*\*/g, '<strong>$1</strong>');
+    // Italic
+    text = text.replace(/\*(.*?)\*/g, '<em>$1</em>');
+    // Lists
+    text = text.replace(/^- (.*)/gm, '• $1');
+    return text;
   };
 
   return (
@@ -188,7 +198,7 @@ const NotesThread: React.FC<NotesThreadProps> = ({ notes }) => {
                       color: 'grey.500',
                       '&:hover': {
                         color: 'primary.main',
-                        bgcolor: 'primary.lighter',
+                        bgcolor: 'primary.light',
                       },
                     }}
                   >
@@ -256,7 +266,7 @@ const NotesThread: React.FC<NotesThreadProps> = ({ notes }) => {
                   },
                 }}
               >
-                <ReactMarkdown>{note.content}</ReactMarkdown>
+                <ReactMarkdown>{formatMarkdown(note.content)}</ReactMarkdown>
               </Box>
             )}
           </NoteBox>
