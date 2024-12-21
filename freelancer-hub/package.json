@@ -1,8 +1,10 @@
 {
-  "name": "freelancer-hub",
+  "name": "solo-studio",
+  "productName": "SoloStudio",
   "private": true,
-  "version": "0.0.0",
+  "version": "0.1.0",
   "type": "module",
+  "description": "Your freelance command center",
   "scripts": {
     "dev": "vite",
     "build": "tsc -b && vite build",
@@ -13,22 +15,19 @@
   "dependencies": {
     "@emotion/react": "^11.14.0",
     "@emotion/styled": "^11.14.0",
-    "@headlessui/react": "^2.2.0",
-    "@heroicons/react": "^2.2.0",
-    "@mui/icons-material": "^6.2.1",
-    "@mui/material": "^6.2.1",
+    "@mui/icons-material": "^5.15.5",
+    "@mui/material": "^5.16.12",
     "@mui/x-date-pickers": "^6.18.6",
     "@tauri-apps/api": "^2.1.1",
     "@tauri-apps/cli": "^2.1.0",
     "@types/react-router-dom": "^5.3.3",
-    "autoprefixer": "^10.4.20",
     "date-fns": "^2.30.0",
     "lucide-react": "^0.468.0",
-    "postcss": "^8.4.49",
     "react": "^18.3.1",
     "react-dom": "^18.3.1",
+    "react-dropzone": "^14.3.5",
+    "react-markdown": "^9.0.1",
     "react-router-dom": "^7.0.2",
-    "tailwindcss": "^3.4.17",
     "zustand": "^5.0.2"
   },
   "devDependencies": {
@@ -41,6 +40,7 @@
     "eslint-plugin-react-hooks": "^5.0.0",
     "eslint-plugin-react-refresh": "^0.4.16",
     "globals": "^15.13.0",
+    "postcss": "^8.4.49",
     "typescript": "~5.6.2",
     "typescript-eslint": "^8.18.1",
     "vite": "^6.0.3"

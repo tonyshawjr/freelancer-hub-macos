@@ -1,5 +1,5 @@
 import React from 'react';
-import { Box, Typography, Container } from '@mui/material';
+import { Box, Typography } from '@mui/material';
 import { mockInvoices } from '../data/mockInvoices';
 import { mockProjects } from '../data/mockProjects';
 import { formatCurrency } from '../utils/invoiceUtils';
@@ -26,28 +26,36 @@ const DashboardTest: React.FC = () => {
     .reduce((sum, p) => sum + p.budget, 0);
 
   return (
-    <Container maxWidth="lg">
-      <Box sx={{ mt: 4, mb: 4 }}>
-        <Typography variant="h4" component="h1" gutterBottom>
-          Dashboard
-        </Typography>
-        
-        <Box sx={{ mt: 4 }}>
-          <Typography variant="h6" gutterBottom>
-            Financial Overview
+    <Box sx={{ bgcolor: '#FFFFFF', width: '100%' }}>
+      <Box sx={{ 
+        maxWidth: '1200px',
+        width: '100%',
+        margin: '0 auto',
+        py: { xs: 3, sm: 4, md: 5 },
+        px: { xs: 2, sm: 3 }
+      }}>
+        <Box sx={{ mt: 4, mb: 4 }}>
+          <Typography variant="h4" component="h1" gutterBottom>
+            Dashboard
           </Typography>
-          <Typography>
-            Unpaid Invoices (YTD): {formatCurrency(unpaidInvoicesYTD)}
-          </Typography>
-          <Typography>
-            Paid Invoices (MTD): {formatCurrency(paidInvoicesMTD)}
-          </Typography>
-          <Typography>
-            Outstanding Proposals: {formatCurrency(outstandingProposals)}
-          </Typography>
+          
+          <Box sx={{ mt: 4 }}>
+            <Typography variant="h6" gutterBottom>
+              Financial Overview
+            </Typography>
+            <Typography>
+              Unpaid Invoices (YTD): {formatCurrency(unpaidInvoicesYTD)}
+            </Typography>
+            <Typography>
+              Paid Invoices (MTD): {formatCurrency(paidInvoicesMTD)}
+            </Typography>
+            <Typography>
+              Outstanding Proposals: {formatCurrency(outstandingProposals)}
+            </Typography>
+          </Box>
         </Box>
       </Box>
-    </Container>
+    </Box>
   );
 };
 

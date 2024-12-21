@@ -6,8 +6,8 @@
     "devUrl": "http://localhost:5173",
     "frontendDist": "../dist"
   },
-  "identifier": "com.freelancer-hub.dev",
-  "productName": "Freelancer Hub",
+  "identifier": "studio.getsolo.app",
+  "productName": "SoloStudio",
   "version": "0.1.0",
   "app": {
     "windows": [
@@ -15,7 +15,7 @@
         "fullscreen": false,
         "height": 800,
         "resizable": true,
-        "title": "Freelancer Hub",
+        "title": "SoloStudio",
         "width": 1200,
         "center": true
       }

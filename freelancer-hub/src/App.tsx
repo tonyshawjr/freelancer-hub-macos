@@ -1,6 +1,7 @@
 import { BrowserRouter as Router, Routes, Route, Navigate } from 'react-router-dom';
 import { ThemeProvider } from '@mui/material/styles';
 import CssBaseline from '@mui/material/CssBaseline';
+import { GlobalStyles } from '@mui/material';
 import { theme } from './theme';
 import { MockDataProvider } from './context/MockDataContext';
 import { RSSProvider } from './context/RSSContext';
@@ -24,12 +25,36 @@ import Messages from './pages/Messages';
 import Profile from './pages/Profile';
 import Notifications from './pages/Notifications';
 import CreateTicket from './pages/CreateTicket';
+import TicketDetail from './pages/TicketDetail';
 
 function App() {
   return (
     <ThemeProvider theme={theme}>
+      <CssBaseline />
+      <GlobalStyles
+        styles={{
+          '*': {
+            margin: 0,
+            padding: 0,
+            boxSizing: 'border-box',
+          },
+          'html, body': {
+            width: '100%',
+            height: '100%',
+            margin: 0,
+            padding: 0,
+          },
+          '#root': {
+            width: '100%',
+            height: '100%',
+            margin: 0,
+            padding: 0,
+            display: 'flex',
+            flexDirection: 'column'
+          }
+        }}
+      />
       <RSSProvider>
-        <CssBaseline />
         <MockDataProvider>
           <Router>
             <Layout>
@@ -42,6 +67,7 @@ function App() {
                 <Route path="/projects/:id" element={<ProjectDetail />} />
                 <Route path="/tickets" element={<Tickets />} />
                 <Route path="/tickets/create" element={<CreateTicket />} />
+                <Route path="/tickets/:id" element={<TicketDetail />} />
                 <Route path="/messages" element={<Messages />} />
                 <Route path="/profile" element={<Profile />} />
                 <Route path="/notifications" element={<Notifications />} />

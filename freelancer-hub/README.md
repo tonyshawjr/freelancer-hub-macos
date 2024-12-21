@@ -1,11 +1,23 @@
-# React + TypeScript + Vite
+# SoloStudio
 
-This template provides a minimal setup to get React working in Vite with HMR and some ESLint rules.
+Your freelance command center. Manage clients, projects, and invoices in one place.
 
-Currently, two official plugins are available:
+## Features
 
-- [@vitejs/plugin-react](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react/README.md) uses [Babel](https://babeljs.io/) for Fast Refresh
-- [@vitejs/plugin-react-swc](https://github.com/vitejs/vite-plugin-react-swc) uses [SWC](https://swc.rs/) for Fast Refresh
+- Client Management
+- Project Tracking
+- Ticket System
+- Invoice Generation
+- Time Tracking
+- Client Portal
+
+## Development
+
+This project uses:
+- React + TypeScript
+- Vite for building
+- Tauri for native app
+- Material-UI components
 
 ## Expanding the ESLint configuration
 
