@@ -1,10 +1,9 @@
-import React, { useState } from 'react';
+import { useState } from 'react';
 import {
   AppBar,
   Toolbar,
   Button,
   Box,
-  Container,
   Stack,
   Avatar,
   IconButton,
@@ -21,14 +20,25 @@ import NotificationDrawer from './NotificationDrawer';
 import MobileMenu from './MobileMenu';
 import UserMenu from './UserMenu';
 import { Logo } from '../common/Logo';
+import { useUserSettings } from '../../stores/userSettings';
+
+const navigationLinks = [
+  { label: 'Dashboard', path: '/' },
+  { label: 'Projects', path: '/projects' },
+  { label: 'Tickets', path: '/tickets' },
+  { label: 'Clients', path: '/clients' },
+  { label: 'Invoices', path: '/invoices' },
+  { label: 'Messages', path: '/messages' }
+];
 
 const Navbar = () => {
-  const [anchorEl, setAnchorEl] = React.useState<null | HTMLElement>(null);
+  const [anchorEl, setAnchorEl] = useState<null | HTMLElement>(null);
   const [notificationsOpen, setNotificationsOpen] = useState(false);
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
   const theme = useTheme();
   const isMobileOrTablet = useMediaQuery(theme.breakpoints.down('lg'));
   const location = useLocation();
+  const { firstName, lastName } = useUserSettings();
 
   const isActive = (path: string) => {
     if (path === '/') {
@@ -59,6 +69,8 @@ const Navbar = () => {
   };
 
   const unreadCount = mockNotifications.filter(n => !n.read).length;
+  const fullName = firstName && lastName ? `${firstName} ${lastName}` : 'Tony Shaw';
+  const initials = firstName && lastName ? `${firstName[0]}${lastName[0]}` : 'TS';
 
   return (
     <AppBar 
@@ -110,13 +122,7 @@ const Navbar = () => {
                 spacing={1} 
                 sx={{ ml: 4 }}
               >
-                {[
-                  { label: 'Projects', path: '/projects' },
-                  { label: 'Tickets', path: '/tickets' },
-                  { label: 'Clients', path: '/clients' },
-                  { label: 'Invoices', path: '/invoices' },
-                  { label: 'Messages', path: '/messages' }
-                ].map((link) => (
+                {navigationLinks.map((link) => (
                   <Button
                     key={link.path}
                     component={RouterLink}
@@ -207,7 +213,9 @@ const Navbar = () => {
                     border: '2px solid',
                     borderColor: '#6366F1'
                   }}
-                />
+                >
+                  {initials}
+                </Avatar>
                 {!isMobileOrTablet && (
                   <Typography 
                     variant="subtitle2" 
@@ -217,7 +225,7 @@ const Navbar = () => {
                       fontSize: '0.875rem'
                     }}
                   >
-                    Tony Shaw
+                    {fullName}
                   </Typography>
                 )}
               </Stack>
@@ -228,7 +236,7 @@ const Navbar = () => {
               open={Boolean(anchorEl)}
               onClose={handleClose}
               onLogout={handleLogout}
-              userName="Tony Shaw"
+              userName={fullName}
             />
           </Stack>
         </Toolbar>
@@ -238,14 +246,7 @@ const Navbar = () => {
       <MobileMenu
         open={mobileMenuOpen}
         onClose={toggleMobileMenu}
-        navigationLinks={[
-          { label: 'Home', path: '/' },
-          { label: 'Projects', path: '/projects' },
-          { label: 'Tickets', path: '/tickets' },
-          { label: 'Clients', path: '/clients' },
-          { label: 'Invoices', path: '/invoices' },
-          { label: 'Messages', path: '/messages' }
-        ]}
+        navigationLinks={navigationLinks}
       />
 
       {/* Notifications Drawer */}

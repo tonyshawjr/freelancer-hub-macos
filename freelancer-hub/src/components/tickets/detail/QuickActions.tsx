@@ -16,15 +16,15 @@ interface QuickActionsProps {
 }
 
 const ActionButton = styled(Button)(({ theme }) => ({
-  backgroundColor: theme.palette.grey[50],
-  color: theme.palette.grey[700],
+  backgroundColor: theme.palette.background.paper,
+  color: theme.palette.text.primary,
   borderRadius: theme.shape.borderRadius,
   padding: '8px 16px',
   textTransform: 'none',
   fontWeight: 500,
   fontSize: '0.875rem',
   '&:hover': {
-    backgroundColor: theme.palette.grey[100],
+    backgroundColor: theme.palette.background.default,
   },
   '& .MuiButton-startIcon': {
     marginRight: theme.spacing(1),
@@ -35,8 +35,8 @@ const ActionButton = styled(Button)(({ theme }) => ({
 }));
 
 const StatusButton = styled(Button)(({ theme }) => ({
-  backgroundColor: theme.palette.grey[50],
-  color: theme.palette.grey[700],
+  backgroundColor: theme.palette.background.paper,
+  color: theme.palette.text.primary,
   borderRadius: theme.shape.borderRadius,
   padding: '8px 16px',
   textTransform: 'none',
@@ -45,7 +45,7 @@ const StatusButton = styled(Button)(({ theme }) => ({
   minWidth: 140,
   justifyContent: 'space-between',
   '&:hover': {
-    backgroundColor: theme.palette.grey[100],
+    backgroundColor: theme.palette.background.default,
   },
   '& .MuiButton-endIcon': {
     marginLeft: 'auto',
@@ -54,15 +54,15 @@ const StatusButton = styled(Button)(({ theme }) => ({
 }));
 
 const DangerButton = styled(Button)(({ theme }) => ({
-  backgroundColor: theme.palette.error.light,
-  color: theme.palette.error.main,
+  backgroundColor: theme.palette.error.main,
+  color: theme.palette.error.contrastText,
   borderRadius: theme.shape.borderRadius,
   padding: '8px 16px',
   textTransform: 'none',
   fontWeight: 500,
   fontSize: '0.875rem',
   '&:hover': {
-    backgroundColor: theme.palette.error.lighter,
+    backgroundColor: theme.palette.error.dark,
   },
   '& .MuiButton-startIcon': {
     marginRight: theme.spacing(1),
@@ -100,16 +100,16 @@ const QuickActions: React.FC<QuickActionsProps> = ({ ticket }) => {
             fullWidth
             variant="outlined"
             sx={{
-              color: '#6366F1',
-              borderColor: '#6366F1',
+              color: 'primary.main',
+              borderColor: 'primary.main',
               borderWidth: '1px',
               borderStyle: 'solid',
               bgcolor: 'transparent',
               fontSize: '0.9375rem',
               fontWeight: 500,
               '&:hover': {
-                bgcolor: 'rgba(99, 102, 241, 0.04)',
-                borderColor: '#4F46E5'
+                bgcolor: 'primary.light',
+                borderColor: 'primary.main'
               }
             }}
           >
@@ -127,16 +127,16 @@ const QuickActions: React.FC<QuickActionsProps> = ({ ticket }) => {
             fullWidth
             variant="outlined"
             sx={{
-              color: '#6366F1',
-              borderColor: '#6366F1',
+              color: 'primary.main',
+              borderColor: 'primary.main',
               borderWidth: '1px',
               borderStyle: 'solid',
               bgcolor: 'transparent',
               fontSize: '0.9375rem',
               fontWeight: 500,
               '&:hover': {
-                bgcolor: 'rgba(99, 102, 241, 0.04)',
-                borderColor: '#4F46E5'
+                bgcolor: 'primary.light',
+                borderColor: 'primary.main'
               }
             }}
           >
@@ -150,13 +150,13 @@ const QuickActions: React.FC<QuickActionsProps> = ({ ticket }) => {
             fullWidth
             variant="contained"
             sx={{
-              bgcolor: '#EF4444',
-              color: 'white',
+              bgcolor: 'error.main',
+              color: 'error.contrastText',
               border: 'none',
               fontSize: '0.9375rem',
               fontWeight: 500,
               '&:hover': {
-                bgcolor: '#DC2626'
+                bgcolor: 'error.dark'
               }
             }}
           >
@@ -209,10 +209,10 @@ const QuickActions: React.FC<QuickActionsProps> = ({ ticket }) => {
               py: 1,
               px: 2,
               '&.Mui-selected': {
-                bgcolor: 'primary.lighter',
+                bgcolor: 'primary.light',
                 color: 'primary.main',
                 '&:hover': {
-                  bgcolor: 'primary.lighter',
+                  bgcolor: 'primary.light',
                 },
               },
             }}

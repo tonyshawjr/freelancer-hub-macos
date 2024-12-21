@@ -1,246 +1,125 @@
-import React, { useCallback, useState } from 'react';
-import { 
-  Box, 
-  Typography, 
-  IconButton, 
-  Stack, 
-  Tooltip, 
-  Button,
-  Menu,
-  MenuItem,
-  ListItemIcon,
-  ListItemText
-} from '@mui/material';
-import { styled } from '@mui/material/styles';
+import React from 'react';
+import { Box, Typography, List, ListItem, IconButton } from '@mui/material';
 import { useDropzone } from 'react-dropzone';
 import CloudUploadIcon from '@mui/icons-material/CloudUpload';
-import InsertDriveFileIcon from '@mui/icons-material/InsertDriveFile';
-import ImageIcon from '@mui/icons-material/Image';
-import PictureAsPdfIcon from '@mui/icons-material/PictureAsPdf';
-import DownloadIcon from '@mui/icons-material/Download';
-import DeleteOutlineIcon from '@mui/icons-material/DeleteOutline';
-import MoreVertIcon from '@mui/icons-material/MoreVert';
+import DeleteIcon from '@mui/icons-material/Delete';
+import { styled } from '@mui/material/styles';
 
-interface File {
+interface FilesListProps {
+  files: {
+    id: string;
+    name: string;
+    type: string;
+    size: number;
+    uploadedAt: string;
+    url: string;
+  }[];
+}
+
+interface CustomFile extends File {
   id: string;
-  name: string;
-  type: string;
-  size: number;
   uploadedAt: string;
   url: string;
 }
 
-interface FilesListProps {
-  files: File[];
-}
-
-const DropZone = styled(Box)(({ theme }) => ({
-  border: '1px dashed',
-  borderColor: 'divider',
-  backgroundColor: '#fff',
-  borderRadius: 1,
-  p: 3,
-  textAlign: 'center',
-  cursor: 'pointer',
-  transition: 'all 0.2s ease-in-out',
-  '&:hover': {
-    borderColor: 'primary.main',
-    backgroundColor: 'rgba(99, 102, 241, 0.04)'
-  }
-}));
-
-const FileItem = styled(Box)(({ theme }) => ({
-  display: 'flex',
-  alignItems: 'center',
-  gap: theme.spacing(2),
-  padding: theme.spacing(1.5),
+const UploadBox = styled(Box)(({ theme }) => ({
+  border: `2px dashed ${theme.palette.divider}`,
   borderRadius: theme.shape.borderRadius,
-  backgroundColor: theme.palette.grey[50],
+  padding: theme.spacing(3),
+  textAlign: 'center',
+  backgroundColor: theme.palette.background.paper,
+  cursor: 'pointer',
   '&:hover': {
-    backgroundColor: theme.palette.grey[100],
+    borderColor: theme.palette.primary.main,
+    backgroundColor: theme.palette.action.hover,
   },
 }));
 
-const FileIcon = styled(Box)(({ theme }) => ({
-  width: 40,
-  height: 40,
-  display: 'flex',
-  alignItems: 'center',
-  justifyContent: 'center',
-  borderRadius: theme.shape.borderRadius,
-  backgroundColor: theme.palette.grey[200],
-  color: theme.palette.grey[700],
-}));
-
 const FilesList: React.FC<FilesListProps> = ({ files }) => {
-  const [anchorEl, setAnchorEl] = useState<null | HTMLElement>(null);
-  const [selectedFileId, setSelectedFileId] = useState<string | null>(null);
-
-  const onDrop = useCallback((acceptedFiles: File[]) => {
-    // Handle file upload
-    console.log(acceptedFiles);
+  const onDrop = React.useCallback((acceptedFiles: File[]) => {
+    const customFiles = acceptedFiles.map(file => ({
+      ...file,
+      id: Math.random().toString(),
+      uploadedAt: new Date().toISOString(),
+      url: URL.createObjectURL(file)
+    })) as CustomFile[];
+    
+    // Handle the files here
+    console.log('Uploaded files:', customFiles);
   }, []);
 
   const { getRootProps, getInputProps, isDragActive } = useDropzone({
     onDrop,
     accept: {
-      'image/*': ['.png', '.jpg', '.jpeg', '.gif'],
+      'image/*': ['.jpeg', '.jpg', '.png'],
       'application/pdf': ['.pdf'],
-      'text/*': ['.txt', '.md'],
     },
+    maxSize: 5242880, // 5MB
   });
 
-  const formatFileSize = (bytes: number) => {
+  const formatFileSize = (bytes: number): string => {
     if (bytes === 0) return '0 Bytes';
     const k = 1024;
     const sizes = ['Bytes', 'KB', 'MB', 'GB'];
     const i = Math.floor(Math.log(bytes) / Math.log(k));
-    return parseFloat((bytes / Math.pow(k, i)).toFixed(2)) + ' ' + sizes[i];
-  };
-
-  const getFileIcon = (type: string) => {
-    switch (type) {
-      case 'image':
-        return <ImageIcon />;
-      case 'pdf':
-        return <PictureAsPdfIcon />;
-      default:
-        return <InsertDriveFileIcon />;
-    }
-  };
-
-  const handleOpenMenu = (event: React.MouseEvent<HTMLElement>, fileId: string) => {
-    setAnchorEl(event.currentTarget);
-    setSelectedFileId(fileId);
-  };
-
-  const handleCloseMenu = () => {
-    setAnchorEl(null);
-    setSelectedFileId(null);
+    return `${parseFloat((bytes / Math.pow(k, i)).toFixed(2))} ${sizes[i]}`;
   };
 
   return (
     <Box>
-      <Typography
-        variant="h6"
-        sx={{
-          fontSize: '1.125rem',
-          fontWeight: 600,
-          color: 'text.primary',
-          mb: 2
-        }}
-      >
+      <Typography variant="h6" gutterBottom>
         Files & Attachments
       </Typography>
 
-      <DropZone {...getRootProps()} sx={{
-        border: '1px dashed',
-        borderColor: 'divider',
-        backgroundColor: '#fff',
-        borderRadius: 1,
-        p: 3,
-        textAlign: 'center',
-        cursor: 'pointer',
-        transition: 'all 0.2s ease-in-out',
-        '&:hover': {
-          borderColor: 'primary.main',
-          backgroundColor: 'rgba(99, 102, 241, 0.04)'
-        }
-      }}>
+      <UploadBox {...getRootProps()}>
         <input {...getInputProps()} />
-        <CloudUploadIcon
-          sx={{
-            fontSize: 40,
-            color: 'text.secondary',
-            mb: 1
-          }}
-        />
-        {isDragActive ? (
-          <Typography variant="body1" color="text.secondary">
-            Drop the files here...
-          </Typography>
-        ) : (
-          <>
-            <Typography variant="body1" color="text.secondary" sx={{ mb: 1 }}>
-              Drag and drop files here, or click to select files
-            </Typography>
-            <Typography variant="caption" color="text.secondary">
-              Supported formats: Images, PDF, Text files
-            </Typography>
-          </>
-        )}
-      </DropZone>
+        <CloudUploadIcon sx={{ fontSize: 40, color: 'action.active', mb: 1 }} />
+        <Typography>
+          {isDragActive
+            ? 'Drop the files here...'
+            : 'Drag & drop files here, or click to select files'}
+        </Typography>
+        <Typography variant="caption" color="text.secondary">
+          (Max file size: 5MB)
+        </Typography>
+      </UploadBox>
 
-      <Stack spacing={1} sx={{ mt: 2 }}>
+      <List sx={{ mt: 2 }}>
         {files.map((file) => (
-          <Box
+          <ListItem
             key={file.id}
             sx={{
               display: 'flex',
               alignItems: 'center',
-              gap: 2,
-              p: 2,
-              backgroundColor: '#fff',
-              border: '1px solid',
-              borderColor: 'divider',
-              borderRadius: 1,
+              py: 1,
+              px: 2,
               '&:hover': {
-                backgroundColor: 'rgba(99, 102, 241, 0.04)'
-              }
+                bgcolor: 'action.hover',
+              },
             }}
           >
-            <Box
-              sx={{
-                width: 40,
-                height: 40,
-                display: 'flex',
-                alignItems: 'center',
-                justifyContent: 'center',
-                borderRadius: 1,
-                backgroundColor: 'rgba(99, 102, 241, 0.08)',
-                color: 'primary.main'
-              }}
-            >
-              {getFileIcon(file.type)}
-            </Box>
-
-            <Box sx={{ flex: 1, minWidth: 0 }}>
-              <Typography
-                variant="subtitle2"
-                sx={{
-                  fontWeight: 500,
-                  color: 'text.primary',
-                  overflow: 'hidden',
-                  textOverflow: 'ellipsis',
-                  whiteSpace: 'nowrap'
-                }}
-              >
-                {file.name}
-              </Typography>
+            <Box sx={{ flexGrow: 1 }}>
+              <Typography variant="subtitle2">{file.name}</Typography>
               <Typography variant="caption" color="text.secondary">
                 {formatFileSize(file.size)} • {new Date(file.uploadedAt).toLocaleDateString()}
               </Typography>
             </Box>
-
-            <Stack direction="row" spacing={1}>
-              <Tooltip title="Download">
-                <IconButton size="small" sx={{ color: 'text.secondary' }}>
-                  <DownloadIcon fontSize="small" />
-                </IconButton>
-              </Tooltip>
-              <Tooltip title="More">
-                <IconButton 
-                  size="small" 
-                  sx={{ color: 'text.secondary' }}
-                  onClick={(e) => handleOpenMenu(e, file.id)}
-                >
-                  <MoreVertIcon fontSize="small" />
-                </IconButton>
-              </Tooltip>
-            </Stack>
-          </Box>
+            <IconButton size="small" color="error">
+              <DeleteIcon />
+            </IconButton>
+            <IconButton size="small" sx={{ color: 'text.secondary' }}>
+              <DownloadIcon fontSize="small" />
+            </IconButton>
+            <IconButton 
+              size="small" 
+              sx={{ color: 'text.secondary' }}
+              onClick={(e) => handleOpenMenu(e, file.id)}
+            >
+              <MoreVertIcon fontSize="small" />
+            </IconButton>
+          </ListItem>
         ))}
-      </Stack>
+      </List>
 
       <Menu
         anchorEl={anchorEl}
