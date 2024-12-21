@@ -21,15 +21,104 @@ const Dashboard: React.FC = () => {
   const urgentTasks = tickets.filter(t => t.priority === 'high' && t.status !== 'closed');
 
   const getGreeting = () => {
-    const hour = currentTime.getHours();
-    
-    if (hour >= 5 && hour < 12) {
-      return '👋 Good morning';
-    } else if (hour >= 12 && hour < 17) {
-      return '👋 Good afternoon';
-    } else {
-      return '👋 Good evening';
+    const date = new Date();
+    const hour = date.getHours();
+    const day = date.getDay();
+    const month = date.getMonth();
+    const random = Math.random();
+  
+    // Special Days Check
+    if (day === 1) { // Monday
+      if (random < 0.25) return "Monday - let's make it count! 💪";
+      if (random < 0.5) return "New week, fresh start! 🚀";
+      if (random < 0.75) return "Monday motivation activated";
+      return "Ready to crush this week?";
     }
+  
+    if (day === 5) { // Friday
+      if (random < 0.25) return "Friday vibes! 🎉";
+      if (random < 0.5) return "The weekend is calling!";
+      if (random < 0.75) return "Friday mode: engaged";
+      return "Finishing the week strong!";
+    }
+  
+    if (day === 0 || day === 6) { // Weekend
+      if (random < 0.25) return "Weekend warrior mode 💪";
+      if (random < 0.5) return "Grinding on the weekend!";
+      if (random < 0.75) return "Now that's dedication!";
+      return "Making the most of weekend hours";
+    }
+  
+    // Seasonal Greetings
+    const seasonalGreeting = getSeasonalGreeting(month, date.getDate());
+    if (seasonalGreeting) return seasonalGreeting;
+  
+    // Regular Time-Based Greetings
+    if (hour >= 5 && hour < 12) {
+      if (random < 0.2) return "Look who's up early! ☀️";
+      if (random < 0.4) return "Rise and grind! ⚡";
+      if (random < 0.6) return "Ready to rock this day? 🎸";
+      if (random < 0.8) return "Coffee time! ☕";
+      return "Time to make magic happen ✨";
+    } 
+    
+    else if (hour >= 12 && hour < 17) {
+      if (random < 0.2) return "Crushing it today! 💪";
+      if (random < 0.4) return "In the flow! 🌊";
+      if (random < 0.6) return "Peak productivity hours! ⚡";
+      if (random < 0.8) return "Keep that momentum going! 🚀";
+      return "Making things happen! 💫";
+    } 
+    
+    else if (hour >= 17 && hour < 22) {
+      if (random < 0.2) return "Still going strong! 💪";
+      if (random < 0.4) return "Evening hustle! 🌟";
+      if (random < 0.6) return "Finishing strong! 🎯";
+      if (random < 0.8) return "The day's not over yet! ⚡";
+      return "Evening productivity session! 🌙";
+    }
+    
+    else {
+      if (random < 0.2) return "Night owl mode: activated 🦉";
+      if (random < 0.4) return "The best ideas come at night ✨";
+      if (random < 0.6) return "Midnight momentum! 🌙";
+      if (random < 0.8) return "The quiet hours are the best! 🌠";
+      return "Late night inspiration! 💫";
+    }
+  };
+  
+  // Separate function for seasonal greetings
+  const getSeasonalGreeting = (month: number, day: number) => {
+    // Holiday checks
+    if (month === 11) { // December
+      if (day === 25) return "Merry Christmas! 🎄";
+      if (day === 24) return "Christmas Eve magic! ✨";
+      if (day >= 20) return "Holiday season is here! 🎄";
+    }
+  
+    if (month === 0 && day === 1) return "Happy New Year! 🎉";
+    if (month === 3 && day === 1) return "No fooling - time to work! 🃏";
+    if (month === 6 && day === 4) return "Happy Independence Day! 🎆";
+    if (month === 9 && day === 31) return "Spooky productivity! 🎃";
+  
+    // Seasonal messages
+    if (month === 11 || month === 0 || month === 1) { // Winter
+      if (Math.random() < 0.3) return "Cozy productivity season! ❄️";
+    }
+    
+    if (month >= 2 && month <= 4) { // Spring
+      if (Math.random() < 0.3) return "Spring productivity blooming! 🌸";
+    }
+    
+    if (month >= 5 && month <= 7) { // Summer
+      if (Math.random() < 0.3) return "Summer productivity mode! ☀️";
+    }
+    
+    if (month >= 8 && month <= 10) { // Fall
+      if (Math.random() < 0.3) return "Fall focus activated! 🍂";
+    }
+  
+    return null; // If no seasonal greeting, return null to use regular greetings
   };
 
   return (
@@ -44,21 +133,22 @@ const Dashboard: React.FC = () => {
         {/* Hero Section */}
         <Box sx={{ mb: { xs: 6, md: 8 } }}>
           <Box sx={{ 
-            width: { xs: '100%', md: '605px' },
+            width: { xs: '100%', md: '66%' },
             textAlign: { xs: 'center', md: 'left' }
           }}>
             <Typography variant="h1" sx={{ 
-              fontSize: { xs: '2.5rem', sm: '3rem' }, 
-              fontWeight: 700,
+              fontSize: { xs: '2.5rem', sm: '4rem' }, 
+              fontWeight: 800,
               color: '#1a1a1a',
+              lineHeight: 1.1,
               mb: 1
             }}>
-              {getGreeting()}, Tony
+              {getGreeting()}
             </Typography>
             <Typography variant="subtitle1" sx={{ 
-              fontSize: '1.25rem', 
+              fontSize: '2rem', 
               color: '#6366F1',
-              fontWeight: 500,
+              fontWeight: 700,
               mb: 2
             }}>
               {format(currentTime, 'EEEE, MMMM do, yyyy')}
@@ -66,13 +156,14 @@ const Dashboard: React.FC = () => {
             <Typography variant="body1" sx={{ 
               fontSize: '1.25rem', 
               color: 'text.secondary',
+              fontWeight: 400,
               mb: 3,
               lineHeight: 1.6
             }}>
               You're currently juggling {activeProjects.length} active projects with {formatCurrency(totalPendingAmount)} in pending payments waiting to be processed. There are {urgentTasks.length} urgent tickets requiring your attention, so prioritize these support requests to maintain client satisfaction.
             </Typography>
             <Grid container spacing={2}>
-              <Grid item xs={12} sm={6}>
+              <Grid item xs={12} sm={4}>
                 <Button
                   component={RouterLink}
                   to="/projects"
@@ -89,7 +180,7 @@ const Dashboard: React.FC = () => {
                   View Projects
                 </Button>
               </Grid>
-              <Grid item xs={12} sm={6}>
+              <Grid item xs={12} sm={4}>
                 <Button
                   component={RouterLink}
                   to="/tickets"
@@ -151,24 +242,22 @@ const Dashboard: React.FC = () => {
                   <TrendingUpIcon sx={{ color: '#10B981' }} />
                 </Grid>
               </Grid>
-              <Typography variant="subtitle1" sx={{ 
-                fontSize: '1.25rem', 
-                fontWeight: 600, 
-                mb: 0.5 
-              }}>
+              <Typography 
+                variant="subtitle1" 
+                className="card-title"
+              >
                 Active Projects
               </Typography>
-              <Typography variant="body2" sx={{
-                fontSize: '1.25rem', 
-                color: 'text.secondary'
-              }}>
+              <Typography 
+                variant="body2" 
+                className="card-subtitle"
+              >
                 vs. Last Month
               </Typography>
-              <Typography variant="body2" sx={{
-                fontSize: '1.25rem', 
-                color: 'text.secondary',
-                mt: 1
-              }}>
+              <Typography 
+                variant="body2" 
+                className="card-detail"
+              >
                 {activeProjects.length} of {projects.length} projects active
               </Typography>
             </Box>
@@ -194,24 +283,22 @@ const Dashboard: React.FC = () => {
                   <TrendingUpIcon sx={{ color: '#10B981' }} />
                 </Grid>
               </Grid>
-              <Typography variant="subtitle1" sx={{ 
-                fontSize: '1.25rem', 
-                fontWeight: 600, 
-                mb: 0.5 
-              }}>
+              <Typography 
+                variant="subtitle1" 
+                className="card-title"
+              >
                 Payment Rate
               </Typography>
-              <Typography variant="body2" sx={{
-                fontSize: '1.25rem', 
-                color: 'text.secondary'
-              }}>
+              <Typography 
+                variant="body2" 
+                className="card-subtitle"
+              >
                 vs. Last Month
               </Typography>
-              <Typography variant="body2" sx={{
-                fontSize: '1.25rem', 
-                color: 'text.secondary',
-                mt: 1
-              }}>
+              <Typography 
+                variant="body2" 
+                className="card-detail"
+              >
                 {invoices.length - pendingInvoices.length} of {invoices.length} invoices paid
               </Typography>
             </Box>
@@ -237,24 +324,22 @@ const Dashboard: React.FC = () => {
                   <TrendingDownIcon sx={{ color: '#EF4444' }} />
                 </Grid>
               </Grid>
-              <Typography variant="subtitle1" sx={{ 
-                fontSize: '1.25rem', 
-                fontWeight: 600, 
-                mb: 0.5 
-              }}>
+              <Typography 
+                variant="subtitle1" 
+                className="card-title"
+              >
                 Client Growth
               </Typography>
-              <Typography variant="body2" sx={{
-                fontSize: '1.25rem', 
-                color: 'text.secondary'
-              }}>
+              <Typography 
+                variant="body2" 
+                className="card-subtitle"
+              >
                 vs. Last Month
               </Typography>
-              <Typography variant="body2" sx={{
-                fontSize: '1.25rem', 
-                color: 'text.secondary',
-                mt: 1
-              }}>
+              <Typography 
+                variant="body2" 
+                className="card-detail"
+              >
                 {clients.filter(c => {
                   const clientDate = new Date(c.joinedDate);
                   return clientDate.getMonth() === currentTime.getMonth() &&
@@ -284,24 +369,22 @@ const Dashboard: React.FC = () => {
                   <TrendingUpIcon sx={{ color: '#10B981' }} />
                 </Grid>
               </Grid>
-              <Typography variant="subtitle1" sx={{ 
-                fontSize: '1.25rem', 
-                fontWeight: 600, 
-                mb: 0.5 
-              }}>
+              <Typography 
+                variant="subtitle1" 
+                className="card-title"
+              >
                 Ticket Resolution
               </Typography>
-              <Typography variant="body2" sx={{
-                fontSize: '1.25rem', 
-                color: 'text.secondary'
-              }}>
+              <Typography 
+                variant="body2" 
+                className="card-subtitle"
+              >
                 vs. Last Month
               </Typography>
-              <Typography variant="body2" sx={{
-                fontSize: '1.25rem', 
-                color: 'text.secondary',
-                mt: 1
-              }}>
+              <Typography 
+                variant="body2" 
+                className="card-detail"
+              >
                 {tickets.filter(t => t.status === 'closed').length} of {tickets.length} tickets resolved
               </Typography>
             </Box>
