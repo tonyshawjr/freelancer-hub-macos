@@ -1,14 +1,11 @@
-import { Typography } from '@mui/material';
-import PageContainer from '../components/layout/PageContainer';
+import PageTitle from '../components/common/PageTitle';
 
 const Messages = () => {
   return (
-    <PageContainer>
-      <Typography variant="h4" component="h1" gutterBottom>
-        Messages
-      </Typography>
+    <>
+      <PageTitle>Messages</PageTitle>
       {/* Add your messages page content here */}
-    </PageContainer>
+    </>
   );
 };
 

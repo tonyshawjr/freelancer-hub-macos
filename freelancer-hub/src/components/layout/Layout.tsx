@@ -2,7 +2,6 @@ import React from 'react';
 import { Box } from '@mui/material';
 import { Outlet } from 'react-router-dom';
 import Navbar from '../navbar/Navbar';
-import PageContainer from './PageContainer';
 
 const Layout: React.FC = () => {
   return (
@@ -19,19 +18,27 @@ const Layout: React.FC = () => {
       {/* Main Content */}
       <Box
         component="main"
-        data-main-content="true"
         sx={{
-          flex: 1,
+          flexGrow: 1,
           width: '100%',
           display: 'flex',
           flexDirection: 'column',
           bgcolor: '#FFFFFF',
           overflowY: 'auto',
+          marginTop: '40px', // Navbar margin
         }}
       >
-        <PageContainer>
+        <Box
+          sx={{
+            maxWidth: '1280px',
+            width: '100%',
+            marginLeft: 'auto',
+            marginRight: 'auto',
+            padding: '24px',
+          }}
+        >
           <Outlet />
-        </PageContainer>
+        </Box>
       </Box>
     </Box>
   );

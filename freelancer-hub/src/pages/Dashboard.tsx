@@ -123,8 +123,6 @@ const Dashboard: React.FC = () => {
 
   return (
     <Box sx={{ 
-      p: 3,
-      mx: 'auto',
       width: '100%'
     }}>
       {/* Hero Section */}

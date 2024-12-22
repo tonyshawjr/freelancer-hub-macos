@@ -1,12 +1,9 @@
-import { Typography } from '@mui/material';
-import PageContainer from '../components/layout/PageContainer';
+import PageTitle from '../components/common/PageTitle';
 
 export default function Invoices() {
   return (
-    <PageContainer>
-      <Typography variant="h4" sx={{ mb: 4, fontWeight: 'bold' }}>
-        Invoices
-      </Typography>
-    </PageContainer>
+    <>
+      <PageTitle>Invoices</PageTitle>
+    </>
   );
 }
