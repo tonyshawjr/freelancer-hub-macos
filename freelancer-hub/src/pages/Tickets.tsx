@@ -4,14 +4,17 @@ import {
   Typography,
   Button,
   Grid,
+  Stack
 } from '@mui/material';
 import AddIcon from '@mui/icons-material/Add';
+import TrendingUpIcon from '@mui/icons-material/TrendingUp';
+import TrendingDownIcon from '@mui/icons-material/TrendingDown';
 import { useNavigate } from 'react-router-dom';
-import StatsCard from '../components/tickets/StatsCard';
 import FilterBar from '../components/tickets/FilterBar';
 import ViewToggle from '../components/tickets/ViewToggle';
 import TicketList from '../components/tickets/TicketList';
 import { Ticket, TicketStatus, TicketPriority, MainCategory } from '../types/tickets';
+import MetricCard from '../components/metrics/MetricCard';
 
 interface FilterOptions {
   status?: TicketStatus[];
@@ -72,99 +75,168 @@ const Tickets = () => {
 
   return (
     <Box sx={{ 
-      bgcolor: '#FFFFFF', 
-      minHeight: '100%',
-      display: 'flex',
-      flexDirection: 'column',
-      alignItems: 'center'
+      p: 3,
+      mx: 'auto',
+      width: '100%'
     }}>
+      {/* Header Section */}
       <Box sx={{ 
-        width: '100%',
-        maxWidth: '1200px',
-        py: { xs: 3, sm: 4 }, 
-        px: { xs: 2, sm: 3 } 
+        display: 'flex', 
+        justifyContent: 'space-between',
+        alignItems: 'flex-start',
+        mb: 4 
       }}>
-        {/* Header Section */}
-        <Box sx={{ mb: 4, display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+        <Stack spacing={1}>
           <Typography 
-            variant="h4" 
+            variant="h1" 
             sx={{ 
-              fontWeight: 700,
-              fontSize: { xs: '1.75rem', sm: '2rem' }
+              fontSize: { xs: '2rem', sm: '2.5rem' },
+              fontWeight: 800,
+              mb: 2,
+              color: '#1F2937'
             }}
           >
-            Tickets Overview
+            Tickets
           </Typography>
-          <Button
-            variant="contained"
-            startIcon={<AddIcon />}
-            onClick={() => navigate('/tickets/create')}
-            sx={{
-              bgcolor: '#6366F1',
-              '&:hover': { bgcolor: '#4F46E5' },
-              px: 3,
-              py: 1
-            }}
+          <Typography 
+            variant="subtitle1" 
+            color="text.secondary" 
+            sx={{ mb: 3 }}
           >
-            New Ticket
-          </Button>
+            Manage and track all your support tickets in one place
+          </Typography>
+        </Stack>
+
+        <Button
+          variant="contained"
+          startIcon={<AddIcon />}
+          onClick={() => navigate('/tickets/new')}
+          sx={{ 
+            height: 'fit-content',
+            px: 3,
+            py: 1.5,
+            fontSize: '1rem',
+            fontWeight: 600,
+            boxShadow: 'none',
+            '&:hover': {
+              boxShadow: 'none'
+            }
+          }}
+        >
+          Create Ticket
+        </Button>
+      </Box>
+
+      {/* Metrics Section */}
+      <Box sx={{ 
+        display: 'grid',
+        gridTemplateColumns: 'repeat(4, 1fr)',
+        gap: 3,
+        mb: 4
+      }}>
+        {/* Resolution Rate */}
+        <Box sx={{ 
+          p: 3,
+          bgcolor: '#F9FAFB',
+          borderRadius: 2
+        }}>
+          <Stack spacing={1}>
+            <Box sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
+              <Typography variant="h3" sx={{ color: '#6366F1', fontWeight: 700 }}>
+                {((mockTickets.filter(t => t.status === 'Closed').length / mockTickets.length) * 100).toFixed(0)}%
+              </Typography>
+              <TrendingUpIcon sx={{ color: '#10B981' }} />
+            </Box>
+            <Typography variant="subtitle1" sx={{ color: '#1F2937', fontWeight: 600 }}>
+              Resolution Rate
+            </Typography>
+            <Typography variant="body2" sx={{ color: '#6B7280' }}>
+              {mockTickets.filter(t => t.status === 'Closed').length} of {mockTickets.length} tickets resolved
+            </Typography>
+          </Stack>
         </Box>
 
-        {/* Stats Section */}
-        <Grid container spacing={3} sx={{ mb: 4 }}>
-          <Grid item xs={12} sm={6} md={3}>
-            <StatsCard
-              title="Total Tickets"
-              value={mockTickets.length}
-              trend={{ value: 12.5, isPositive: true }}
-              color="rgba(99, 102, 241, 0.1)"
-            />
-          </Grid>
-          <Grid item xs={12} sm={6} md={3}>
-            <StatsCard
-              title="Open Tickets"
-              value={mockTickets.filter(t => t.status === 'Open').length}
-              trend={{ value: 2.3, isPositive: false }}
-              color="rgba(239, 68, 68, 0.1)"
-            />
-          </Grid>
-          <Grid item xs={12} sm={6} md={3}>
-            <StatsCard
-              title="In Progress"
-              value={mockTickets.filter(t => t.status === 'In Progress').length}
-              trend={{ value: 8.4, isPositive: true }}
-              color="rgba(245, 158, 11, 0.1)"
-            />
-          </Grid>
-          <Grid item xs={12} sm={6} md={3}>
-            <StatsCard
-              title="Closed Tickets"
-              value={mockTickets.filter(t => t.status === 'Closed').length}
-              trend={{ value: 5.7, isPositive: true }}
-              color="rgba(16, 185, 129, 0.1)"
-            />
-          </Grid>
-        </Grid>
-
-        {/* Filters Section */}
-        <Box sx={{ mb: 3 }}>
-          <FilterBar onFilterChange={handleFilterChange} onClearFilters={handleClearFilters} />
+        {/* High Priority */}
+        <Box sx={{ 
+          p: 3,
+          bgcolor: '#F9FAFB',
+          borderRadius: 2
+        }}>
+          <Stack spacing={1}>
+            <Box sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
+              <Typography variant="h3" sx={{ color: '#6366F1', fontWeight: 700 }}>
+                {mockTickets.filter(t => t.priority === 'High').length}
+              </Typography>
+              <TrendingDownIcon sx={{ color: '#EF4444' }} />
+            </Box>
+            <Typography variant="subtitle1" sx={{ color: '#1F2937', fontWeight: 600 }}>
+              High Priority
+            </Typography>
+            <Typography variant="body2" sx={{ color: '#6B7280' }}>
+              Tickets requiring immediate attention
+            </Typography>
+          </Stack>
         </Box>
 
-        {/* View Toggle & List */}
-        <Box>
-          <Box sx={{ mb: 2 }}>
-            <ViewToggle view={currentView} onViewChange={setCurrentView} />
-          </Box>
-          <TicketList
-            tickets={mockTickets}
-            onTicketClick={handleTicketClick}
-            onStatusChange={handleStatusChange}
-            onPriorityChange={handlePriorityChange}
-            onAddNote={handleAddNote}
-          />
+        {/* In Progress */}
+        <Box sx={{ 
+          p: 3,
+          bgcolor: '#F9FAFB',
+          borderRadius: 2
+        }}>
+          <Stack spacing={1}>
+            <Box sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
+              <Typography variant="h3" sx={{ color: '#6366F1', fontWeight: 700 }}>
+                {mockTickets.filter(t => t.status === 'In Progress').length}
+              </Typography>
+              <TrendingUpIcon sx={{ color: '#10B981' }} />
+            </Box>
+            <Typography variant="subtitle1" sx={{ color: '#1F2937', fontWeight: 600 }}>
+              In Progress
+            </Typography>
+            <Typography variant="body2" sx={{ color: '#6B7280' }}>
+              Tickets currently being worked on
+            </Typography>
+          </Stack>
+        </Box>
+
+        {/* New Tickets */}
+        <Box sx={{ 
+          p: 3,
+          bgcolor: '#F9FAFB',
+          borderRadius: 2
+        }}>
+          <Stack spacing={1}>
+            <Box sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
+              <Typography variant="h3" sx={{ color: '#6366F1', fontWeight: 700 }}>
+                {mockTickets.filter(t => {
+                  const created = new Date(t.createdAt);
+                  const now = new Date();
+                  return created.getMonth() === now.getMonth() && created.getFullYear() === now.getFullYear();
+                }).length}
+              </Typography>
+              <TrendingUpIcon sx={{ color: '#10B981' }} />
+            </Box>
+            <Typography variant="subtitle1" sx={{ color: '#1F2937', fontWeight: 600 }}>
+              New Tickets
+            </Typography>
+            <Typography variant="body2" sx={{ color: '#6B7280' }}>
+              Tickets created this month
+            </Typography>
+          </Stack>
         </Box>
       </Box>
+
+      {/* Filters Section */}
+      <FilterBar onFilterChange={handleFilterChange} onClearFilters={handleClearFilters} />
+      
+      {/* View Toggle */}
+      <Box sx={{ mb: 3 }}>
+        <ViewToggle value={currentView} onChange={(view) => setCurrentView(view)} />
+      </Box>
+
+      {/* Tickets List */}
+      <TicketList tickets={mockTickets} onAddNote={handleAddNote} />
     </Box>
   );
 };
