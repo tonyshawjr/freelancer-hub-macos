@@ -1,5 +1,5 @@
 import React from 'react';
-import { Box } from '@mui/material';
+import { Box, Container } from '@mui/material';
 import Navbar from '../navbar/Navbar';
 
 interface LayoutProps {
@@ -30,8 +30,9 @@ const Layout: React.FC<LayoutProps> = ({ children }) => {
           overflowY: 'auto'
         }}
       >
-        {/* Page Content */}
-        {children}
+        <Container>
+          {children}
+        </Container>
       </Box>
     </Box>
   );

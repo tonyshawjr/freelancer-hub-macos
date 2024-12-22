@@ -7,7 +7,6 @@ import {
   Select,
   MenuItem,
   Button,
-  Paper,
   Grid,
   InputAdornment,
 } from '@mui/material';
@@ -44,109 +43,162 @@ const FilterBar: React.FC<FilterBarProps> = ({ onFilterChange, onClearFilters })
   };
 
   return (
-    <Paper
-      elevation={0}
-      sx={{
-        p: 2,
-        mb: 3,
-        borderRadius: 2,
-        bgcolor: 'background.paper',
-        border: '1px solid',
-        borderColor: 'divider',
-      }}
-    >
-      <Grid container spacing={2} alignItems="center">
-        <Grid item xs={12} md={4}>
-          <TextField
-            fullWidth
-            size="small"
-            placeholder="Search tickets..."
-            value={searchQuery}
-            onChange={(e) => handleFilterChange('search', e.target.value)}
-            InputProps={{
-              startAdornment: (
-                <InputAdornment position="start">
-                  <SearchIcon sx={{ color: 'text.secondary' }} />
-                </InputAdornment>
-              ),
-            }}
-          />
-        </Grid>
-        
-        <Grid item xs={12} md={2}>
-          <FormControl fullWidth size="small">
-            <InputLabel>Status</InputLabel>
-            <Select
-              value={status}
-              label="Status"
-              onChange={(e) => handleFilterChange('status', e.target.value)}
-            >
-              <MenuItem value="All">All</MenuItem>
-              <MenuItem value="Open">Open</MenuItem>
-              <MenuItem value="In Progress">In Progress</MenuItem>
-              <MenuItem value="Closed">Closed</MenuItem>
-            </Select>
-          </FormControl>
-        </Grid>
+    <Box sx={{ 
+      display: 'flex',
+      alignItems: 'center',
+      gap: 2,
+      mb: 3
+    }}>
+      <TextField
+        fullWidth
+        placeholder="Search tickets..."
+        variant="outlined"
+        size="small"
+        value={searchQuery}
+        onChange={(e) => handleFilterChange('search', e.target.value)}
+        sx={{ 
+          flex: 1,
+          '& .MuiOutlinedInput-root': {
+            borderRadius: '8px',
+            backgroundColor: '#FFFFFF',
+            boxShadow: 'none',
+            '& fieldset': {
+              borderColor: '#E5E7EB'
+            },
+            '&:hover fieldset': {
+              borderColor: '#D1D5DB'
+            }
+          }
+        }}
+        InputProps={{
+          startAdornment: (
+            <InputAdornment position="start">
+              <SearchIcon sx={{ color: 'text.secondary' }} />
+            </InputAdornment>
+          ),
+        }}
+      />
 
-        <Grid item xs={12} md={2}>
-          <FormControl fullWidth size="small">
-            <InputLabel>Category</InputLabel>
-            <Select
-              value={category}
-              label="Category"
-              onChange={(e) => handleFilterChange('category', e.target.value)}
-            >
-              <MenuItem value="All">All Categories</MenuItem>
-              {Object.keys(TICKET_CATEGORIES).map((cat) => (
-                <MenuItem key={cat} value={cat}>{cat}</MenuItem>
-              ))}
-            </Select>
-          </FormControl>
-        </Grid>
+      <FormControl size="small">
+        <InputLabel>Status</InputLabel>
+        <Select
+          value={status}
+          label="Status"
+          onChange={(e) => handleFilterChange('status', e.target.value)}
+          sx={{ 
+            width: '100px',
+            backgroundColor: '#FFFFFF',
+            boxShadow: 'none',
+            '& .MuiOutlinedInput-notchedOutline': {
+              borderRadius: '8px',
+              borderColor: '#E5E7EB'
+            },
+            '&:hover .MuiOutlinedInput-notchedOutline': {
+              borderColor: '#D1D5DB'
+            }
+          }}
+        >
+          <MenuItem value="All">All</MenuItem>
+          <MenuItem value="Open">Open</MenuItem>
+          <MenuItem value="In Progress">In Progress</MenuItem>
+          <MenuItem value="Closed">Closed</MenuItem>
+        </Select>
+      </FormControl>
 
-        <Grid item xs={12} md={2}>
-          <Box sx={{ display: 'flex', gap: 1 }}>
-            <TextField
-              size="small"
-              type="date"
-              label="From"
-              value={dateRange.start}
-              onChange={(e) => handleFilterChange('dateRange', { ...dateRange, start: e.target.value })}
-              InputLabelProps={{ shrink: true }}
-              fullWidth
-            />
-          </Box>
-        </Grid>
+      <FormControl size="small">
+        <InputLabel>Category</InputLabel>
+        <Select
+          value={category}
+          label="Category"
+          onChange={(e) => handleFilterChange('category', e.target.value)}
+          sx={{ 
+            width: '120px',
+            backgroundColor: '#FFFFFF',
+            boxShadow: 'none',
+            '& .MuiOutlinedInput-notchedOutline': {
+              borderRadius: '8px',
+              borderColor: '#E5E7EB'
+            },
+            '&:hover .MuiOutlinedInput-notchedOutline': {
+              borderColor: '#D1D5DB'
+            }
+          }}
+        >
+          <MenuItem value="All">All Categories</MenuItem>
+          {Object.keys(TICKET_CATEGORIES).map((cat) => (
+            <MenuItem key={cat} value={cat}>{cat}</MenuItem>
+          ))}
+        </Select>
+      </FormControl>
 
-        <Grid item xs={12} md={2}>
-          <Box sx={{ display: 'flex', gap: 1 }}>
-            <TextField
-              size="small"
-              type="date"
-              label="To"
-              value={dateRange.end}
-              onChange={(e) => handleFilterChange('dateRange', { ...dateRange, end: e.target.value })}
-              InputLabelProps={{ shrink: true }}
-              fullWidth
-            />
-          </Box>
-        </Grid>
+      <TextField
+        size="small"
+        type="date"
+        label="From"
+        value={dateRange.start}
+        onChange={(e) => handleFilterChange('dateRange', { ...dateRange, start: e.target.value })}
+        sx={{ 
+          width: '100px',
+          backgroundColor: '#FFFFFF',
+          '& .MuiOutlinedInput-root': {
+            borderRadius: '8px',
+            boxShadow: 'none',
+            '& fieldset': {
+              borderColor: '#E5E7EB'
+            },
+            '&:hover fieldset': {
+              borderColor: '#D1D5DB'
+            }
+          }
+        }}
+        InputLabelProps={{ shrink: true }}
+      />
 
-        <Grid item xs={12}>
-          <Box sx={{ display: 'flex', gap: 2, justifyContent: 'flex-end' }}>
-            <Button
-              variant="outlined"
-              startIcon={<FilterListIcon />}
-              onClick={handleClear}
-              size="small"
-            >
-              Clear Filters
-            </Button>
-          </Box>
-        </Grid>
-      </Grid>
-    </Paper>
+      <TextField
+        size="small"
+        type="date"
+        label="To"
+        value={dateRange.end}
+        onChange={(e) => handleFilterChange('dateRange', { ...dateRange, end: e.target.value })}
+        sx={{ 
+          width: '100px',
+          backgroundColor: '#FFFFFF',
+          '& .MuiOutlinedInput-root': {
+            borderRadius: '8px',
+            boxShadow: 'none',
+            '& fieldset': {
+              borderColor: '#E5E7EB'
+            },
+            '&:hover fieldset': {
+              borderColor: '#D1D5DB'
+            }
+          }
+        }}
+        InputLabelProps={{ shrink: true }}
+      />
+
+      <Button
+        variant="outlined"
+        startIcon={<FilterListIcon />}
+        onClick={handleClear}
+        size="small"
+        sx={{ 
+          ml: 'auto',
+          borderRadius: '8px',
+          borderColor: '#6366F1',
+          color: '#6366F1',
+          boxShadow: 'none',
+          textTransform: 'none',
+          '&:hover': {
+            borderColor: '#4F46E5',
+            backgroundColor: 'rgba(99, 102, 241, 0.04)',
+            boxShadow: 'none'
+          }
+        }}
+      >
+        Clear Filters
+      </Button>
+    </Box>
   );
 };
 

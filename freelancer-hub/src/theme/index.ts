@@ -46,9 +46,16 @@ export const theme = createTheme({
       },
     },
     MuiContainer: {
+      defaultProps: {
+        maxWidth: false,
+      },
       styleOverrides: {
         root: {
           maxWidth: '1280px !important',
+          paddingLeft: '24px',
+          paddingRight: '24px',
+          marginLeft: 'auto',
+          marginRight: 'auto',
         },
       },
     },
@@ -73,5 +80,20 @@ export const theme = createTheme({
         },
       },
     },
+    MuiBox: {
+      styleOverrides: {
+        root: {
+          '&[data-page-content="true"]': {
+            maxWidth: '1280px',
+            width: '100%',
+            marginLeft: 'auto',
+            marginRight: 'auto',
+            padding: '24px'
+          }
+        }
+      }
+    }
+  },
+  palette: {
   },
 });
