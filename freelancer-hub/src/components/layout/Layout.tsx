@@ -1,17 +1,15 @@
 import React from 'react';
-import { Box, Container } from '@mui/material';
+import { Box } from '@mui/material';
+import { Outlet } from 'react-router-dom';
 import Navbar from '../navbar/Navbar';
+import PageContainer from './PageContainer';
 
-interface LayoutProps {
-  children: React.ReactNode;
-}
-
-const Layout: React.FC<LayoutProps> = ({ children }) => {
+const Layout: React.FC = () => {
   return (
     <Box sx={{ 
       display: 'flex', 
       flexDirection: 'column',
-      flex: 1,
+      minHeight: '100vh',
       width: '100%',
       bgcolor: '#FFFFFF'
     }}>
@@ -21,18 +19,19 @@ const Layout: React.FC<LayoutProps> = ({ children }) => {
       {/* Main Content */}
       <Box
         component="main"
+        data-main-content="true"
         sx={{
           flex: 1,
           width: '100%',
           display: 'flex',
           flexDirection: 'column',
           bgcolor: '#FFFFFF',
-          overflowY: 'auto'
+          overflowY: 'auto',
         }}
       >
-        <Container>
-          {children}
-        </Container>
+        <PageContainer>
+          <Outlet />
+        </PageContainer>
       </Box>
     </Box>
   );

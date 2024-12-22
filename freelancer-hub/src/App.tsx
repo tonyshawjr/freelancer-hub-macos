@@ -6,6 +6,7 @@ import GlobalStyles from './styles/GlobalStyles';
 import Router from './routes';
 import { LocalizationProvider } from '@mui/x-date-pickers';
 import { AdapterDateFns } from '@mui/x-date-pickers/AdapterDateFns';
+import { MockDataProvider } from './context/MockDataContext';
 
 const App = () => {
   return (
@@ -13,9 +14,11 @@ const App = () => {
       <LocalizationProvider dateAdapter={AdapterDateFns}>
         <CssBaseline />
         <GlobalStyles />
-        <BrowserRouter>
-          <Router />
-        </BrowserRouter>
+        <MockDataProvider>
+          <BrowserRouter>
+            <Router />
+          </BrowserRouter>
+        </MockDataProvider>
       </LocalizationProvider>
     </ThemeProvider>
   );

@@ -6,11 +6,7 @@ import AccessTimeIcon from '@mui/icons-material/AccessTime';
 import PersonIcon from '@mui/icons-material/Person';
 
 interface TicketDescriptionProps {
-  ticket: {
-    description: string;
-    dueDate: string;
-    assignedTo: string;
-  };
+  description: string;
 }
 
 const StyledBox = styled(Box)(({ theme }) => ({
@@ -41,16 +37,13 @@ const MetaBox = styled(Box)(({ theme }) => ({
   },
 }));
 
-const TicketDescription: React.FC<TicketDescriptionProps> = ({ ticket }) => {
+const TicketDescription: React.FC<TicketDescriptionProps> = ({ description }) => {
   const [isEditing, setIsEditing] = useState(false);
-  const [editedDescription, setEditedDescription] = useState(ticket.description);
-  const [editedDueDate, setEditedDueDate] = useState<Date | null>(
-    ticket.dueDate ? new Date(ticket.dueDate) : null
-  );
+  const [editedDescription, setEditedDescription] = useState(description);
 
   const handleSave = () => {
-    // TODO: Implement save logic
     setIsEditing(false);
+    // TODO: Save changes
   };
 
   const formatBulletPoints = (text: string) => {
@@ -87,14 +80,6 @@ const TicketDescription: React.FC<TicketDescriptionProps> = ({ ticket }) => {
           {line}
         </Typography>
       );
-    });
-  };
-
-  const formatDueDate = (date: string) => {
-    return new Date(date).toLocaleDateString('en-US', {
-      month: 'short',
-      day: 'numeric',
-      year: 'numeric'
     });
   };
 
@@ -154,7 +139,7 @@ const TicketDescription: React.FC<TicketDescriptionProps> = ({ ticket }) => {
               <Button 
                 variant="outlined" 
                 onClick={() => {
-                  setEditedDescription(ticket.description);
+                  setEditedDescription(description);
                   setIsEditing(false);
                 }}
               >
@@ -172,44 +157,9 @@ const TicketDescription: React.FC<TicketDescriptionProps> = ({ ticket }) => {
               lineHeight: 1.6,
             }}
           >
-            {formatBulletPoints(ticket.description)}
+            {formatBulletPoints(description)}
           </Typography>
         )}
-
-        <Stack 
-          direction="row" 
-          spacing={3} 
-          sx={{ 
-            mt: 3,
-            pt: 3,
-            borderTop: '1px solid',
-            borderColor: 'grey.200'
-          }}
-        >
-          <MetaBox>
-            <AccessTimeIcon />
-            <Typography variant="body2">
-              Due {formatDueDate(ticket.dueDate)}
-            </Typography>
-          </MetaBox>
-
-          <MetaBox>
-            <PersonIcon />
-            <Avatar
-              sx={{
-                width: 24,
-                height: 24,
-                fontSize: '0.75rem',
-                bgcolor: 'primary.main',
-              }}
-            >
-              {ticket.assignedTo.charAt(0)}
-            </Avatar>
-            <Typography variant="body2">
-              {ticket.assignedTo}
-            </Typography>
-          </MetaBox>
-        </Stack>
       </StyledBox>
     </Box>
   );

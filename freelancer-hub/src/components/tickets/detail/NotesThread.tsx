@@ -157,13 +157,15 @@ const NotesThread: React.FC<NotesThreadProps> = ({ notes }) => {
           </Stack>
 
           <Button
-            variant="contained"
-            endIcon={<SendIcon />}
             onClick={handleSubmit}
             disabled={!newNote.trim()}
+            variant="contained"
+            color="primary"
+            endIcon={<SendIcon />}
             sx={{
               textTransform: 'none',
-              px: 3,
+              fontWeight: 500,
+              fontSize: '0.875rem',
             }}
           >
             Send

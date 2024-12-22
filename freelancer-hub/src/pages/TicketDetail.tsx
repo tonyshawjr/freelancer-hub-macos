@@ -1,7 +1,6 @@
-import React from 'react';
-import { Box, IconButton, Stack } from '@mui/material';
-import ArrowBackIcon from '@mui/icons-material/ArrowBack';
-import { useNavigate, useParams } from 'react-router-dom';
+import React, { useCallback } from 'react';
+import { Box, Stack, Grid, Button } from '@mui/material';
+import { useParams, useNavigate } from 'react-router-dom';
 
 import TicketHeader from '../components/tickets/detail/TicketHeader';
 import TicketDescription from '../components/tickets/detail/TicketDescription';
@@ -10,10 +9,11 @@ import QuickActions from '../components/tickets/detail/QuickActions';
 import FilesList from '../components/tickets/detail/FilesList';
 import ActivityLog from '../components/tickets/detail/ActivityLog';
 import RelatedItems from '../components/tickets/detail/RelatedItems';
+import PageContainer from '../components/layout/PageContainer';
 
 const TicketDetail: React.FC = () => {
-  const navigate = useNavigate();
   const { id } = useParams();
+  const navigate = useNavigate();
 
   // Mock ticket data - replace with actual data fetching
   const mockTicket = {
@@ -43,16 +43,16 @@ const TicketDetail: React.FC = () => {
     }
   ];
 
+  // Mock files data with proper File type
   const mockFiles = [
-    {
-      id: '1',
-      name: 'screenshot.png',
-      type: 'image',
-      size: 1000.55,
-      uploadedAt: new Date().toISOString(),
-      url: '#'
-    }
-  ];
+    new File([''], 'document1.pdf', { type: 'application/pdf' }),
+    new File([''], 'image1.jpg', { type: 'image/jpeg' }),
+  ].map(file => ({
+    ...file,
+    id: Math.random().toString(),
+    uploadedAt: new Date().toISOString(),
+    url: URL.createObjectURL(file)
+  }));
 
   const mockActivities = [
     {
@@ -71,58 +71,60 @@ const TicketDetail: React.FC = () => {
     }
   ];
 
+  const handleStatusChange = useCallback((newStatus: string) => {
+    console.log('Status changed to:', newStatus);
+    // Implement status change logic here
+  }, []);
+
+  const handleAction = useCallback((action: string) => {
+    console.log('Action triggered:', action);
+    // Implement action handling logic here
+  }, []);
+
   return (
-    <Box 
-      sx={{ 
-        minHeight: '100vh',
-        pb: 4,
-        backgroundColor: '#fff'
-      }}
-    >
-      <Box sx={{ 
-        maxWidth: '1200px',
-        width: '100%',
-        margin: '0 auto',
-        py: { xs: 3, sm: 4, md: 5 },
-        px: { xs: 2, sm: 3 }
-      }}>
-        {/* Back Button */}
-        <IconButton 
-          onClick={() => navigate('/tickets')}
-          sx={{ mb: 2 }}
-        >
-          <ArrowBackIcon />
-        </IconButton>
-
+    <PageContainer>
+      <Box sx={{ mb: 3 }}>
         <TicketHeader ticket={mockTicket} />
-        
-        <Box 
-          sx={{ 
-            mt: 3, 
-            display: 'grid', 
-            gap: 3, 
-            gridTemplateColumns: { 
-              xs: '1fr',
-              lg: '2fr 1fr' 
-            }
-          }}
-        >
-          {/* Left Column */}
-          <Stack spacing={3}>
-            <TicketDescription ticket={mockTicket} />
-            <NotesThread notes={mockNotes} />
-          </Stack>
+      </Box>
 
-          {/* Right Column */}
+      <Grid container spacing={3}>
+        <Grid item xs={12} md={8}>
           <Stack spacing={3}>
-            <QuickActions ticket={mockTicket} />
+            <TicketDescription description={mockTicket.description} />
+            <NotesThread notes={mockNotes} />
+            <QuickActions 
+              onStatusChange={handleStatusChange}
+              onAction={handleAction}
+            />
+            <Button
+              onClick={() => navigate('/tickets')}
+              variant="text"
+              sx={{
+                color: 'text.secondary',
+                textTransform: 'none',
+                fontWeight: 500,
+                fontSize: '0.875rem',
+                pl: 0,
+                alignSelf: 'flex-start',
+                '&:hover': {
+                  backgroundColor: 'transparent',
+                  color: 'text.primary',
+                },
+              }}
+            >
+              ← Back to Tickets
+            </Button>
+          </Stack>
+        </Grid>
+        <Grid item xs={12} md={4}>
+          <Stack spacing={3}>
             <FilesList files={mockFiles} />
             <ActivityLog activities={mockActivities} />
-            <RelatedItems ticket={mockTicket} />
+            <RelatedItems ticketId={mockTicket.id} />
           </Stack>
-        </Box>
-      </Box>
-    </Box>
+        </Grid>
+      </Grid>
+    </PageContainer>
   );
 };
 

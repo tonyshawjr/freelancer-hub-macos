@@ -1,20 +1,22 @@
 import React from 'react';
-import { Box, Typography, List, ListItem, IconButton } from '@mui/material';
+import { 
+  Box, 
+  Typography, 
+  List, 
+  ListItem, 
+  IconButton, 
+  Link,
+  Dialog,
+  DialogTitle,
+  DialogContent,
+  DialogActions,
+  Button
+} from '@mui/material';
 import { useDropzone } from 'react-dropzone';
 import CloudUploadIcon from '@mui/icons-material/CloudUpload';
+import DownloadIcon from '@mui/icons-material/Download';
 import DeleteIcon from '@mui/icons-material/Delete';
 import { styled } from '@mui/material/styles';
-
-interface FilesListProps {
-  files: {
-    id: string;
-    name: string;
-    type: string;
-    size: number;
-    uploadedAt: string;
-    url: string;
-  }[];
-}
 
 interface CustomFile extends File {
   id: string;
@@ -22,10 +24,14 @@ interface CustomFile extends File {
   url: string;
 }
 
-const UploadBox = styled(Box)(({ theme }) => ({
+interface FilesListProps {
+  files: CustomFile[];
+}
+
+const UploadArea = styled('div')(({ theme }) => ({
   border: `2px dashed ${theme.palette.divider}`,
   borderRadius: theme.shape.borderRadius,
-  padding: theme.spacing(3),
+  padding: theme.spacing(2),
   textAlign: 'center',
   backgroundColor: theme.palette.background.paper,
   cursor: 'pointer',
@@ -35,7 +41,22 @@ const UploadBox = styled(Box)(({ theme }) => ({
   },
 }));
 
-const FilesList: React.FC<FilesListProps> = ({ files }) => {
+const FileItem = styled(Box)(({ theme }) => ({
+  display: 'flex',
+  alignItems: 'center',
+  padding: theme.spacing(1, 1.5),
+  borderRadius: theme.shape.borderRadius,
+  border: `1px solid ${theme.palette.divider}`,
+  backgroundColor: theme.palette.background.paper,
+  '&:hover': {
+    backgroundColor: theme.palette.action.hover,
+  },
+}));
+
+const FilesList: React.FC<FilesListProps> = ({ files = [] }) => {
+  const [deleteDialogOpen, setDeleteDialogOpen] = React.useState(false);
+  const [fileToDelete, setFileToDelete] = React.useState<string | null>(null);
+
   const onDrop = React.useCallback((acceptedFiles: File[]) => {
     const customFiles = acceptedFiles.map(file => ({
       ...file,
@@ -50,116 +71,125 @@ const FilesList: React.FC<FilesListProps> = ({ files }) => {
 
   const { getRootProps, getInputProps, isDragActive } = useDropzone({
     onDrop,
-    accept: {
-      'image/*': ['.jpeg', '.jpg', '.png'],
-      'application/pdf': ['.pdf'],
-    },
-    maxSize: 5242880, // 5MB
+    multiple: true
   });
 
-  const formatFileSize = (bytes: number): string => {
+  const formatFileSize = (bytes: number) => {
     if (bytes === 0) return '0 Bytes';
     const k = 1024;
     const sizes = ['Bytes', 'KB', 'MB', 'GB'];
     const i = Math.floor(Math.log(bytes) / Math.log(k));
-    return `${parseFloat((bytes / Math.pow(k, i)).toFixed(2))} ${sizes[i]}`;
+    return parseFloat((bytes / Math.pow(k, i)).toFixed(2)) + ' ' + sizes[i];
+  };
+
+  const formatDate = (dateString: string) => {
+    return new Date(dateString).toLocaleDateString('en-US', {
+      month: 'short',
+      day: 'numeric',
+      year: 'numeric'
+    });
+  };
+
+  const handleDeleteClick = (fileId: string) => {
+    setFileToDelete(fileId);
+    setDeleteDialogOpen(true);
+  };
+
+  const handleDeleteConfirm = () => {
+    // Handle file deletion logic here
+    console.log('Deleting file:', fileToDelete);
+    setDeleteDialogOpen(false);
+    setFileToDelete(null);
+  };
+
+  const handleDeleteCancel = () => {
+    setDeleteDialogOpen(false);
+    setFileToDelete(null);
   };
 
   return (
     <Box>
-      <Typography variant="h6" gutterBottom>
-        Files & Attachments
+      <Typography variant="h6" sx={{ mb: 2 }}>
+        Files
       </Typography>
 
-      <UploadBox {...getRootProps()}>
+      <UploadArea {...getRootProps()}>
         <input {...getInputProps()} />
-        <CloudUploadIcon sx={{ fontSize: 40, color: 'action.active', mb: 1 }} />
-        <Typography>
+        <CloudUploadIcon sx={{ fontSize: 32, color: 'action.active', mb: 1 }} />
+        <Typography variant="body2" color="text.secondary">
           {isDragActive
             ? 'Drop the files here...'
-            : 'Drag & drop files here, or click to select files'}
+            : 'Drag and drop files here, or click to select files'}
         </Typography>
-        <Typography variant="caption" color="text.secondary">
-          (Max file size: 5MB)
-        </Typography>
-      </UploadBox>
+      </UploadArea>
 
-      <List sx={{ mt: 2 }}>
-        {files.map((file) => (
-          <ListItem
-            key={file.id}
-            sx={{
-              display: 'flex',
-              alignItems: 'center',
-              py: 1,
-              px: 2,
-              '&:hover': {
-                bgcolor: 'action.hover',
-              },
-            }}
-          >
-            <Box sx={{ flexGrow: 1 }}>
-              <Typography variant="subtitle2">{file.name}</Typography>
-              <Typography variant="caption" color="text.secondary">
-                {formatFileSize(file.size)} • {new Date(file.uploadedAt).toLocaleDateString()}
-              </Typography>
-            </Box>
-            <IconButton size="small" color="error">
-              <DeleteIcon />
-            </IconButton>
-            <IconButton size="small" sx={{ color: 'text.secondary' }}>
-              <DownloadIcon fontSize="small" />
-            </IconButton>
-            <IconButton 
-              size="small" 
-              sx={{ color: 'text.secondary' }}
-              onClick={(e) => handleOpenMenu(e, file.id)}
-            >
-              <MoreVertIcon fontSize="small" />
-            </IconButton>
-          </ListItem>
-        ))}
-      </List>
+      {files.length > 0 && (
+        <List dense sx={{ mt: 2 }}>
+          {files.map((file) => (
+            <ListItem key={file.id} disablePadding sx={{ mb: 1 }}>
+              <FileItem sx={{ width: '100%' }}>
+                <Box sx={{ flex: 1, minWidth: 0 }}>
+                  <Link
+                    href={file.url}
+                    target="_blank"
+                    rel="noopener"
+                    underline="hover"
+                    sx={{ 
+                      color: 'primary.main',
+                      display: 'block',
+                      typography: 'body2',
+                      overflow: 'hidden',
+                      textOverflow: 'ellipsis',
+                      whiteSpace: 'nowrap'
+                    }}
+                  >
+                    {file.name}
+                  </Link>
+                  <Typography variant="caption" color="text.secondary">
+                    {formatFileSize(file.size)} • Uploaded {formatDate(file.uploadedAt)}
+                  </Typography>
+                </Box>
+                <IconButton
+                  size="small"
+                  href={file.url}
+                  download={file.name}
+                  sx={{ ml: 1 }}
+                >
+                  <DownloadIcon fontSize="small" />
+                </IconButton>
+                <IconButton
+                  size="small"
+                  onClick={() => handleDeleteClick(file.id)}
+                  sx={{ ml: 0.5 }}
+                >
+                  <DeleteIcon fontSize="small" color="error" />
+                </IconButton>
+              </FileItem>
+            </ListItem>
+          ))}
+        </List>
+      )}
 
-      <Menu
-        anchorEl={anchorEl}
-        open={Boolean(anchorEl)}
-        onClose={handleCloseMenu}
-        onClick={handleCloseMenu}
-        transformOrigin={{ horizontal: 'right', vertical: 'top' }}
-        anchorOrigin={{ horizontal: 'right', vertical: 'bottom' }}
-        PaperProps={{
-          elevation: 0,
-          sx: {
-            minWidth: 180,
-            overflow: 'visible',
-            filter: 'drop-shadow(0px 2px 8px rgba(0,0,0,0.1))',
-            mt: 1,
-            '& .MuiMenuItem-root': {
-              px: 2,
-              py: 1,
-              typography: 'body2',
-              borderRadius: 1,
-              '&:hover': {
-                backgroundColor: 'rgba(99, 102, 241, 0.04)'
-              }
-            }
-          }
-        }}
+      <Dialog
+        open={deleteDialogOpen}
+        onClose={handleDeleteCancel}
+        aria-labelledby="delete-dialog-title"
       >
-        <MenuItem>
-          <ListItemIcon>
-            <DownloadIcon fontSize="small" sx={{ color: 'text.secondary' }} />
-          </ListItemIcon>
-          <ListItemText>Download</ListItemText>
-        </MenuItem>
-        <MenuItem sx={{ color: 'error.main' }}>
-          <ListItemIcon>
-            <DeleteOutlineIcon fontSize="small" sx={{ color: 'error.main' }} />
-          </ListItemIcon>
-          <ListItemText>Delete</ListItemText>
-        </MenuItem>
-      </Menu>
+        <DialogTitle id="delete-dialog-title">
+          Delete File
+        </DialogTitle>
+        <DialogContent>
+          <Typography>
+            Are you sure you want to delete this file? This action cannot be undone.
+          </Typography>
+        </DialogContent>
+        <DialogActions>
+          <Button onClick={handleDeleteCancel}>Cancel</Button>
+          <Button onClick={handleDeleteConfirm} color="error" variant="contained">
+            Delete
+          </Button>
+        </DialogActions>
+      </Dialog>
     </Box>
   );
 };

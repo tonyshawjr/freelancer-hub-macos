@@ -1,11 +1,12 @@
-import { Container, Typography } from '@mui/material';
+import { Typography } from '@mui/material';
+import PageContainer from '../components/layout/PageContainer';
 
 export default function Invoices() {
   return (
-    <Container maxWidth="xl">
+    <PageContainer>
       <Typography variant="h4" sx={{ mb: 4, fontWeight: 'bold' }}>
         Invoices
       </Typography>
-    </Container>
+    </PageContainer>
   );
 }
