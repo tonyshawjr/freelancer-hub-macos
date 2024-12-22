@@ -24,12 +24,17 @@ const MobileMenu: React.FC<MobileMenuProps> = ({
       anchor="left"
       open={open}
       onClose={onClose}
+      ModalProps={{
+        sx: {
+          zIndex: 1300
+        }
+      }}
       PaperProps={{
         sx: {
           width: 280,
           bgcolor: '#FFFFFF',
           borderRadius: 0,
-          p: 2,
+          p: 2
         }
       }}
     >
