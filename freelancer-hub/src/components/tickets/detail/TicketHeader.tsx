@@ -1,5 +1,5 @@
 import React from 'react';
-import { Box, Typography, Chip, Stack, Tooltip } from '@mui/material';
+import { Box, Typography, Chip, Stack } from '@mui/material';
 import { styled, useTheme } from '@mui/material/styles';
 import FlagIcon from '@mui/icons-material/Flag';
 import BusinessIcon from '@mui/icons-material/Business';
@@ -97,66 +97,68 @@ const TicketHeader: React.FC<TicketHeaderProps> = ({ ticket }) => {
   const theme = useTheme();
 
   return (
-    <Box sx={{ mb: 4 }}>
-      <Typography 
-        variant="h4" 
-        component="h1" 
-        sx={{ 
-          fontSize: '2.50rem',
-          fontWeight: 600,
-          color: 'text.primary',
-          mb: 2
-        }}
-      >
-        {ticket.title}
-      </Typography>
+    <Box>
+      <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start' }}>
+        <Stack spacing={2}>
+          <Box>
+            <Typography 
+              variant="h4" 
+              component="h1" 
+              sx={{ 
+                fontSize: '2.50rem',
+                fontWeight: 600,
+                color: 'text.primary',
+                mb: 2
+              }}
+            >
+              {ticket.title}
+            </Typography>
+            
+            <Stack direction="row" spacing={2} alignItems="center">
+              <StatusChip
+                label={ticket.status}
+                size="small"
+                status={ticket.status}
+              />
 
-      <Stack direction="row" spacing={2} alignItems="center">
-        <StatusChip
-          label={ticket.status}
-          size="small"
-          status={ticket.status}
-        />
+              <PriorityChip
+                label={ticket.priority}
+                size="small"
+                priority={ticket.priority}
+                icon={<FlagIcon />}
+              />
 
-        <PriorityChip
-          label={ticket.priority}
-          size="small"
-          priority={ticket.priority}
-          icon={<FlagIcon />}
-        />
+              <Chip
+                icon={<BusinessIcon />}
+                label={ticket.clientName}
+                size="small"
+                sx={{
+                  bgcolor: theme.palette.grey[100],
+                  color: theme.palette.grey[700],
+                  borderRadius: '4px',
+                  '& .MuiChip-icon': {
+                    color: theme.palette.grey[500]
+                  }
+                }}
+              />
 
-        <Tooltip title="Client">
-          <Chip
-            icon={<BusinessIcon />}
-            label={ticket.clientName}
-            size="small"
-            sx={{
-              bgcolor: theme.palette.grey[100],
-              color: theme.palette.grey[700],
-              borderRadius: '4px',
-              '& .MuiChip-icon': {
-                color: theme.palette.grey[500]
-              }
-            }}
-          />
-        </Tooltip>
-
-        <Tooltip title="Category">
-          <Chip
-            icon={<CategoryIcon />}
-            label={ticket.category}
-            size="small"
-            sx={{
-              bgcolor: theme.palette.grey[100],
-              color: theme.palette.grey[700],
-              borderRadius: '4px',
-              '& .MuiChip-icon': {
-                color: theme.palette.grey[500]
-              }
-            }}
-          />
-        </Tooltip>
-      </Stack>
+              <Chip
+                icon={<CategoryIcon />}
+                label={ticket.category}
+                size="small"
+                sx={{
+                  bgcolor: theme.palette.grey[100],
+                  color: theme.palette.grey[700],
+                  borderRadius: '4px',
+                  '& .MuiChip-icon': {
+                    color: theme.palette.grey[500]
+                  }
+                }}
+              />
+            </Stack>
+          </Box>
+        </Stack>
+      </Box>
     </Box>
   );
 };

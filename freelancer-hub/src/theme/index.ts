@@ -12,11 +12,20 @@ declare module '@mui/material/styles' {
             marginRight: string;
             padding: string;
           };
+          '&[data-main-content="true"]'?: {
+            marginTop: string;
+          };
         };
       };
     };
   }
 }
+
+// Custom spacing constants
+const LAYOUT_CONSTANTS = {
+  NAVBAR_MARGIN: '40px', // 5 units
+  PAGE_PADDING: '12px',  // 1.5 units
+};
 
 export const theme = createTheme({
   typography: {
@@ -74,6 +83,8 @@ export const theme = createTheme({
           paddingRight: '24px',
           marginLeft: 'auto',
           marginRight: 'auto',
+          paddingTop: LAYOUT_CONSTANTS.PAGE_PADDING,
+          paddingBottom: LAYOUT_CONSTANTS.PAGE_PADDING,
         },
       },
     },
@@ -107,6 +118,9 @@ export const theme = createTheme({
             marginRight: 'auto',
             padding: '24px'
           },
+          '&[data-main-content="true"]': {
+            marginTop: LAYOUT_CONSTANTS.NAVBAR_MARGIN,
+          }
         },
       },
     },

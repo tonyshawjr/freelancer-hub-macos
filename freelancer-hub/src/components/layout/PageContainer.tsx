@@ -9,10 +9,10 @@ const PageContainer = ({ children }: PageContainerProps) => {
   return (
     <Box
       component="main"
+      data-main-content="true"
       sx={{
         flexGrow: 1,
         minHeight: '100%',
-        py: 3,
       }}
     >
       <Container
