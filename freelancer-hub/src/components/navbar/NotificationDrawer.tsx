@@ -44,6 +44,11 @@ const NotificationDrawer: React.FC<NotificationDrawerProps> = ({
       anchor="right"
       open={open}
       onClose={onClose}
+      ModalProps={{
+        sx: {
+          zIndex: 1300
+        }
+      }}
       PaperProps={{
         sx: {
           width: { xs: '100%', sm: 380 },

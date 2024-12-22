@@ -36,7 +36,7 @@ export const Logo = ({ fontSize = 24, color = '#6366F1', onClick }: LogoProps) =
           color,
         }}
       >
-        Studio
+        .studio
       </Typography>
     </Box>
   );

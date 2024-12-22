@@ -1,45 +1,52 @@
 import React from 'react';
-import {
-  Box,
-  TextField,
-  FormControl,
-  InputLabel,
-  Select,
-  MenuItem,
-  Button,
-  Grid,
-  InputAdornment,
-} from '@mui/material';
+import { Box, TextField, Select, MenuItem, Button, InputAdornment } from '@mui/material';
 import SearchIcon from '@mui/icons-material/Search';
 import FilterListIcon from '@mui/icons-material/FilterList';
-import { TICKET_CATEGORIES } from '../../types/tickets';
 
 interface FilterBarProps {
-  onFilterChange: (filters: any) => void;
-  onClearFilters: () => void;
+  onFilterChange: (filters: {
+    search?: string;
+    status?: string;
+    category?: string;
+    dateRange?: {
+      start: string;
+      end: string;
+    };
+  }) => void;
 }
 
-const FilterBar: React.FC<FilterBarProps> = ({ onFilterChange, onClearFilters }) => {
-  const [status, setStatus] = React.useState('All');
-  const [category, setCategory] = React.useState('All');
-  const [dateRange, setDateRange] = React.useState({ start: '', end: '' });
-  const [searchQuery, setSearchQuery] = React.useState('');
+const FilterBar: React.FC<FilterBarProps> = ({ onFilterChange }) => {
+  const [status, setStatus] = React.useState<string>('all');
+  const [category, setCategory] = React.useState<string>('all');
+  const [dateRange, setDateRange] = React.useState<{ start: string; end: string }>({ start: '', end: '' });
+  const [searchQuery, setSearchQuery] = React.useState<string>('');
 
-  const handleFilterChange = (field: string, value: any) => {
-    const newValue = { [field]: value };
-    if (field === 'status') setStatus(value);
-    if (field === 'category') setCategory(value);
-    if (field === 'dateRange') setDateRange(value);
-    if (field === 'search') setSearchQuery(value);
-    onFilterChange(newValue);
+  const handleFilterChange = (type: string, value: string | { start: string; end: string }) => {
+    let newFilters = {};
+    
+    if (type === 'status') {
+      setStatus(value as string);
+      newFilters = { status: value };
+    } else if (type === 'category') {
+      setCategory(value as string);
+      newFilters = { category: value };
+    } else if (type === 'dateRange') {
+      setDateRange(value as { start: string; end: string });
+      newFilters = { dateRange: value };
+    } else if (type === 'search') {
+      setSearchQuery(value as string);
+      newFilters = { search: value };
+    }
+
+    onFilterChange(newFilters);
   };
 
   const handleClear = () => {
-    setStatus('All');
-    setCategory('All');
+    setStatus('all');
+    setCategory('all');
     setDateRange({ start: '', end: '' });
     setSearchQuery('');
-    onClearFilters();
+    onFilterChange({});
   };
 
   return (
@@ -50,7 +57,6 @@ const FilterBar: React.FC<FilterBarProps> = ({ onFilterChange, onClearFilters })
       mb: 3
     }}>
       <TextField
-        fullWidth
         placeholder="Search tickets..."
         variant="outlined"
         size="small"
@@ -79,62 +85,54 @@ const FilterBar: React.FC<FilterBarProps> = ({ onFilterChange, onClearFilters })
         }}
       />
 
-      <FormControl size="small">
-        <InputLabel>Status</InputLabel>
-        <Select
-          value={status}
-          label="Status"
-          onChange={(e) => handleFilterChange('status', e.target.value)}
-          sx={{ 
-            width: '100px',
-            backgroundColor: '#FFFFFF',
-            boxShadow: 'none',
-            '& .MuiOutlinedInput-notchedOutline': {
-              borderRadius: '8px',
-              borderColor: '#E5E7EB'
-            },
-            '&:hover .MuiOutlinedInput-notchedOutline': {
-              borderColor: '#D1D5DB'
-            }
-          }}
-        >
-          <MenuItem value="All">All</MenuItem>
-          <MenuItem value="Open">Open</MenuItem>
-          <MenuItem value="In Progress">In Progress</MenuItem>
-          <MenuItem value="Closed">Closed</MenuItem>
-        </Select>
-      </FormControl>
+      <Select
+        value={status}
+        size="small"
+        onChange={(e) => handleFilterChange('status', e.target.value)}
+        sx={{ 
+          width: '100px',
+          backgroundColor: '#FFFFFF',
+          boxShadow: 'none',
+          '& .MuiOutlinedInput-notchedOutline': {
+            borderRadius: '8px',
+            borderColor: '#E5E7EB'
+          },
+          '&:hover .MuiOutlinedInput-notchedOutline': {
+            borderColor: '#D1D5DB'
+          }
+        }}
+      >
+        <MenuItem value="all">All</MenuItem>
+        <MenuItem value="open">Open</MenuItem>
+        <MenuItem value="closed">Closed</MenuItem>
+      </Select>
 
-      <FormControl size="small">
-        <InputLabel>Category</InputLabel>
-        <Select
-          value={category}
-          label="Category"
-          onChange={(e) => handleFilterChange('category', e.target.value)}
-          sx={{ 
-            width: '120px',
-            backgroundColor: '#FFFFFF',
-            boxShadow: 'none',
-            '& .MuiOutlinedInput-notchedOutline': {
-              borderRadius: '8px',
-              borderColor: '#E5E7EB'
-            },
-            '&:hover .MuiOutlinedInput-notchedOutline': {
-              borderColor: '#D1D5DB'
-            }
-          }}
-        >
-          <MenuItem value="All">All Categories</MenuItem>
-          {Object.keys(TICKET_CATEGORIES).map((cat) => (
-            <MenuItem key={cat} value={cat}>{cat}</MenuItem>
-          ))}
-        </Select>
-      </FormControl>
+      <Select
+        value={category}
+        size="small"
+        onChange={(e) => handleFilterChange('category', e.target.value)}
+        sx={{ 
+          width: '120px',
+          backgroundColor: '#FFFFFF',
+          boxShadow: 'none',
+          '& .MuiOutlinedInput-notchedOutline': {
+            borderRadius: '8px',
+            borderColor: '#E5E7EB'
+          },
+          '&:hover .MuiOutlinedInput-notchedOutline': {
+            borderColor: '#D1D5DB'
+          }
+        }}
+      >
+        <MenuItem value="all">All...</MenuItem>
+        <MenuItem value="bug">Bug</MenuItem>
+        <MenuItem value="feature">Feature</MenuItem>
+        <MenuItem value="support">Support</MenuItem>
+      </Select>
 
       <TextField
+        placeholder="mm/d"
         size="small"
-        type="date"
-        label="From"
         value={dateRange.start}
         onChange={(e) => handleFilterChange('dateRange', { ...dateRange, start: e.target.value })}
         sx={{ 
@@ -151,13 +149,11 @@ const FilterBar: React.FC<FilterBarProps> = ({ onFilterChange, onClearFilters })
             }
           }
         }}
-        InputLabelProps={{ shrink: true }}
       />
 
       <TextField
+        placeholder="mm/d"
         size="small"
-        type="date"
-        label="To"
         value={dateRange.end}
         onChange={(e) => handleFilterChange('dateRange', { ...dateRange, end: e.target.value })}
         sx={{ 
@@ -174,14 +170,12 @@ const FilterBar: React.FC<FilterBarProps> = ({ onFilterChange, onClearFilters })
             }
           }
         }}
-        InputLabelProps={{ shrink: true }}
       />
 
       <Button
         variant="outlined"
         startIcon={<FilterListIcon />}
         onClick={handleClear}
-        size="small"
         sx={{ 
           ml: 'auto',
           borderRadius: '8px',

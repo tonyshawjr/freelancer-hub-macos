@@ -1,57 +1,35 @@
-import { useState } from 'react';
-import {
-  Box,
-  Typography,
-  Button,
-  Grid,
-  Stack
-} from '@mui/material';
+import React from 'react';
+import { useNavigate } from 'react-router-dom';
+import { Box, Typography, Button, Stack } from '@mui/material';
 import AddIcon from '@mui/icons-material/Add';
 import TrendingUpIcon from '@mui/icons-material/TrendingUp';
 import TrendingDownIcon from '@mui/icons-material/TrendingDown';
-import { useNavigate } from 'react-router-dom';
 import FilterBar from '../components/tickets/FilterBar';
-import ViewToggle from '../components/tickets/ViewToggle';
 import TicketList from '../components/tickets/TicketList';
-import { Ticket, TicketStatus, TicketPriority, MainCategory } from '../types/tickets';
-import MetricCard from '../components/metrics/MetricCard';
+import ViewToggle from '../components/common/ViewToggle';
+import { mockTickets } from '../data/mockData';
+import { Ticket } from '../types/tickets';
 
 interface FilterOptions {
-  status?: TicketStatus[];
-  priority?: TicketPriority[];
-  category?: MainCategory[];
   search?: string;
+  status?: string;
+  category?: string;
   dateRange?: {
     start: string;
     end: string;
   };
 }
 
-const Tickets = () => {
+const Tickets: React.FC = () => {
   const navigate = useNavigate();
-  const [currentView, setCurrentView] = useState('all');
-  
-  // Mock data - replace with actual data fetching
-  const mockTickets: Ticket[] = Array.from({ length: 50 }, (_, i) => ({
-    id: `ticket-${i}`,
-    title: `Sample Ticket ${i + 1}`,
-    description: 'Sample description for this ticket. This will be replaced with actual content.',
-    status: ['Open', 'In Progress', 'Closed'][i % 3] as TicketStatus,
-    priority: ['High', 'Medium', 'Low'][i % 3] as TicketPriority,
-    category: ['Website Issues', 'Content Updates', 'Maintenance', 'Client Requests'][i % 4] as MainCategory,
-    clientName: `Client ${i + 1}`,
-    createdAt: new Date(Date.now() - i * 86400000).toISOString(),
-    dueDate: new Date(Date.now() + i * 86400000).toISOString(),
-  }));
+  const [view, setView] = React.useState<'list' | 'board'>('list');
 
   const handleFilterChange = (filters: FilterOptions) => {
     console.log('Filters changed:', filters);
-    // Implement filter logic
   };
 
-  const handleClearFilters = () => {
-    console.log('Filters cleared');
-    // Implement clear filters logic
+  const handleAddNote = (ticketId: string) => {
+    console.log('Adding note to ticket:', ticketId);
   };
 
   const handleTicketClick = (ticket: Ticket) => {
@@ -60,67 +38,36 @@ const Tickets = () => {
 
   const handleStatusChange = (ticketId: string, status: string) => {
     console.log('Status changed:', ticketId, status);
-    // Implement status change logic
   };
 
   const handlePriorityChange = (ticketId: string, priority: string) => {
     console.log('Priority changed:', ticketId, priority);
-    // Implement priority change logic
-  };
-
-  const handleAddNote = (ticketId: string) => {
-    console.log('Add note:', ticketId);
-    // Implement add note logic
   };
 
   return (
-    <Box sx={{ 
-      p: 3,
-      mx: 'auto',
-      width: '100%'
-    }}>
-      {/* Header Section */}
+    <Box sx={{ maxWidth: '1280px', mx: 'auto', p: 3 }}>
+      {/* Header */}
       <Box sx={{ 
-        display: 'flex', 
+        display: 'flex',
+        alignItems: 'center',
         justifyContent: 'space-between',
-        alignItems: 'flex-start',
-        mb: 4 
+        mb: 4
       }}>
-        <Stack spacing={1}>
-          <Typography 
-            variant="h1" 
-            sx={{ 
-              fontSize: { xs: '2rem', sm: '2.5rem' },
-              fontWeight: 800,
-              mb: 2,
-              color: '#1F2937'
-            }}
-          >
-            Tickets
-          </Typography>
-          <Typography 
-            variant="subtitle1" 
-            color="text.secondary" 
-            sx={{ mb: 3 }}
-          >
-            Manage and track all your support tickets in one place
-          </Typography>
-        </Stack>
-
+        <Typography variant="h4" sx={{ color: '#1F2937', fontWeight: 600 }}>
+          Tickets
+        </Typography>
         <Button
           variant="contained"
           startIcon={<AddIcon />}
           onClick={() => navigate('/tickets/new')}
           sx={{ 
-            height: 'fit-content',
-            px: 3,
-            py: 1.5,
-            fontSize: '1rem',
-            fontWeight: 600,
-            boxShadow: 'none',
+            bgcolor: '#6366F1',
             '&:hover': {
-              boxShadow: 'none'
-            }
+              bgcolor: '#4F46E5'
+            },
+            borderRadius: '8px',
+            textTransform: 'none',
+            boxShadow: 'none'
           }}
         >
           Create Ticket
@@ -143,7 +90,7 @@ const Tickets = () => {
           <Stack spacing={1}>
             <Box sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
               <Typography variant="h3" sx={{ color: '#6366F1', fontWeight: 700 }}>
-                {((mockTickets.filter(t => t.status === 'Closed').length / mockTickets.length) * 100).toFixed(0)}%
+                {((mockTickets.filter((t: Ticket) => t.status === 'Closed').length / mockTickets.length) * 100).toFixed(0)}%
               </Typography>
               <TrendingUpIcon sx={{ color: '#10B981' }} />
             </Box>
@@ -151,7 +98,7 @@ const Tickets = () => {
               Resolution Rate
             </Typography>
             <Typography variant="body2" sx={{ color: '#6B7280' }}>
-              {mockTickets.filter(t => t.status === 'Closed').length} of {mockTickets.length} tickets resolved
+              {mockTickets.filter((t: Ticket) => t.status === 'Closed').length} of {mockTickets.length} tickets resolved
             </Typography>
           </Stack>
         </Box>
@@ -165,7 +112,7 @@ const Tickets = () => {
           <Stack spacing={1}>
             <Box sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
               <Typography variant="h3" sx={{ color: '#6366F1', fontWeight: 700 }}>
-                {mockTickets.filter(t => t.priority === 'High').length}
+                {mockTickets.filter((t: Ticket) => t.priority === 'High').length}
               </Typography>
               <TrendingDownIcon sx={{ color: '#EF4444' }} />
             </Box>
@@ -187,7 +134,7 @@ const Tickets = () => {
           <Stack spacing={1}>
             <Box sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
               <Typography variant="h3" sx={{ color: '#6366F1', fontWeight: 700 }}>
-                {mockTickets.filter(t => t.status === 'In Progress').length}
+                {mockTickets.filter((t: Ticket) => t.status === 'In Progress').length}
               </Typography>
               <TrendingUpIcon sx={{ color: '#10B981' }} />
             </Box>
@@ -209,7 +156,7 @@ const Tickets = () => {
           <Stack spacing={1}>
             <Box sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
               <Typography variant="h3" sx={{ color: '#6366F1', fontWeight: 700 }}>
-                {mockTickets.filter(t => {
+                {mockTickets.filter((t: Ticket) => {
                   const created = new Date(t.createdAt);
                   const now = new Date();
                   return created.getMonth() === now.getMonth() && created.getFullYear() === now.getFullYear();
@@ -227,16 +174,22 @@ const Tickets = () => {
         </Box>
       </Box>
 
-      {/* Filters Section */}
-      <FilterBar onFilterChange={handleFilterChange} onClearFilters={handleClearFilters} />
+      {/* Filter Bar */}
+      <FilterBar onFilterChange={handleFilterChange} />
       
       {/* View Toggle */}
       <Box sx={{ mb: 3 }}>
-        <ViewToggle value={currentView} onChange={(view) => setCurrentView(view)} />
+        <ViewToggle value={view} onChange={(newView: 'list' | 'board') => setView(newView)} />
       </Box>
 
       {/* Tickets List */}
-      <TicketList tickets={mockTickets} onAddNote={handleAddNote} />
+      <TicketList 
+        tickets={mockTickets}
+        onTicketClick={handleTicketClick}
+        onStatusChange={handleStatusChange}
+        onPriorityChange={handlePriorityChange}
+        onAddNote={handleAddNote}
+      />
     </Box>
   );
 };

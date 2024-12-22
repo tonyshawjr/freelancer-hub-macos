@@ -1,32 +1,50 @@
 import { createTheme } from '@mui/material/styles';
 
+declare module '@mui/material/styles' {
+  interface Components {
+    MuiBox?: {
+      styleOverrides?: {
+        root?: {
+          '&[data-page-content="true"]'?: {
+            maxWidth: string;
+            width: string;
+            marginLeft: string;
+            marginRight: string;
+            padding: string;
+          };
+        };
+      };
+    };
+  }
+}
+
 export const theme = createTheme({
   typography: {
     fontFamily: '"Inter", "Helvetica", "Arial", sans-serif',
-    htmlFontSize: 18, // This sets the base font size to 20px
+    htmlFontSize: 18,
     h1: {
-      fontSize: '2.5rem', // 50px
+      fontSize: '2.5rem',
     },
     h2: {
-      fontSize: '2rem', // 40px
+      fontSize: '2rem',
     },
     h3: {
-      fontSize: '1.75rem', // 35px
+      fontSize: '1.75rem',
     },
     h4: {
-      fontSize: '1.5rem', // 30px
+      fontSize: '1.5rem',
     },
     h5: {
-      fontSize: '1.25rem', // 25px
+      fontSize: '1.25rem',
     },
     h6: {
-      fontSize: '1rem', // 20px
+      fontSize: '1rem',
     },
     body1: {
-      fontSize: '0.875rem', // 17.5px
+      fontSize: '0.875rem',
     },
     body2: {
-      fontSize: '0.75rem', // 15px
+      fontSize: '0.75rem',
     },
     subtitle1: {
       fontSize: '1.25rem',
@@ -59,7 +77,6 @@ export const theme = createTheme({
         },
       },
     },
-    // Add specific styles for dashboard cards
     MuiCard: {
       styleOverrides: {
         root: {
@@ -89,10 +106,10 @@ export const theme = createTheme({
             marginLeft: 'auto',
             marginRight: 'auto',
             padding: '24px'
-          }
-        }
-      }
-    }
+          },
+        },
+      },
+    },
   },
   palette: {
   },
