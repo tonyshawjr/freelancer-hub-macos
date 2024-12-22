@@ -7,6 +7,7 @@ import TrendingDownIcon from '@mui/icons-material/TrendingDown';
 import FilterBar from '../components/tickets/FilterBar';
 import TicketList from '../components/tickets/TicketList';
 import ViewToggle from '../components/common/ViewToggle';
+import PageTitle from '../components/common/PageTitle';
 import { mockTickets } from '../data/mockData';
 import { Ticket } from '../types/tickets';
 
@@ -45,7 +46,7 @@ const Tickets: React.FC = () => {
   };
 
   return (
-    <Box sx={{ maxWidth: '1280px', mx: 'auto', p: 3 }}>
+    <Box>
       {/* Header */}
       <Box sx={{ 
         display: 'flex',
@@ -53,9 +54,7 @@ const Tickets: React.FC = () => {
         justifyContent: 'space-between',
         mb: 4
       }}>
-        <Typography variant="h4" sx={{ color: '#1F2937', fontWeight: 600 }}>
-          Tickets
-        </Typography>
+        <PageTitle>Tickets</PageTitle>
         <Button
           variant="contained"
           startIcon={<AddIcon />}

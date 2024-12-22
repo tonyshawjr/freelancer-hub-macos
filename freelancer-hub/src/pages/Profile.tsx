@@ -1,6 +1,6 @@
-import React from 'react';
 import { Typography, Box, Paper, Grid, Avatar, Button } from '@mui/material';
 import EditIcon from '@mui/icons-material/Edit';
+import PageTitle from '../components/common/PageTitle';
 
 const Profile = () => {
   // Mock user data - replace with actual user data from your context/state
@@ -14,9 +14,7 @@ const Profile = () => {
 
   return (
     <Box>
-      <Typography variant="h4" component="h1" gutterBottom>
-        Profile
-      </Typography>
+      <PageTitle>Profile</PageTitle>
 
       <Paper sx={{ p: 4, mt: 2 }}>
         <Grid container spacing={4}>

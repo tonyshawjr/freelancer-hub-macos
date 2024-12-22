@@ -1,12 +1,10 @@
-import { Typography } from '@mui/material';
-import PageContainer from '../components/layout/PageContainer';
+import PageTitle from '../components/common/PageTitle';
 
 export default function Projects() {
   return (
-    <PageContainer>
-      <Typography variant="h4" sx={{ mb: 4, fontWeight: 'bold' }}>
-        Projects
-      </Typography>
-    </PageContainer>
+    <>
+      <PageTitle>Projects</PageTitle>
+      {/* Add your projects content here */}
+    </>
   );
 }
