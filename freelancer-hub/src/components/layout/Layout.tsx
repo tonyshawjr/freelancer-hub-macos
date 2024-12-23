@@ -1,21 +1,22 @@
 import React from 'react';
 import { Box } from '@mui/material';
-import { Outlet } from 'react-router-dom';
+import { Outlet, useLocation } from 'react-router-dom';
 import Navbar from '../navbar/Navbar';
 
 const Layout: React.FC = () => {
+  const location = useLocation();
+  console.log('Layout rendering, current path:', location.pathname);
+
   return (
     <Box sx={{ 
       display: 'flex', 
       flexDirection: 'column',
       minHeight: '100vh',
       width: '100%',
-      bgcolor: '#FFFFFF'
+      bgcolor: '#FFFFFF',
+      p: { xs: 2, sm: 3 }  
     }}>
-      {/* Navbar */}
       <Navbar />
-
-      {/* Main Content */}
       <Box
         component="main"
         sx={{
@@ -25,7 +26,7 @@ const Layout: React.FC = () => {
           flexDirection: 'column',
           bgcolor: '#FFFFFF',
           overflowY: 'auto',
-          marginTop: '40px', // Navbar margin
+          marginTop: '64px',  
         }}
       >
         <Box
@@ -44,4 +45,4 @@ const Layout: React.FC = () => {
   );
 };
 
-export default Layout;
+export default React.memo(Layout);

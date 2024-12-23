@@ -3,6 +3,8 @@ import EditIcon from '@mui/icons-material/Edit';
 import PageTitle from '../components/common/PageTitle';
 
 const Profile = () => {
+  console.log('Profile component mounted');
+
   // Mock user data - replace with actual user data from your context/state
   const user = {
     name: 'John Doe',

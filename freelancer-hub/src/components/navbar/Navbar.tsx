@@ -7,7 +7,6 @@ import {
   Stack,
   Avatar,
   IconButton,
-  Typography,
   Badge,
   useTheme,
   useMediaQuery
@@ -100,11 +99,16 @@ const Navbar = () => {
                 </IconButton>
               )}
               
-              <Box sx={{
-                display: 'flex',
-                alignItems: 'center',
-                minWidth: 'fit-content'
-              }}>
+              <Box 
+                component={RouterLink}
+                to="/"
+                sx={{
+                  display: 'flex',
+                  alignItems: 'center',
+                  minWidth: 'fit-content',
+                  textDecoration: 'none'
+                }}
+              >
                 <Logo fontSize={24} />
               </Box>
 
@@ -141,105 +145,67 @@ const Navbar = () => {
               )}
             </Stack>
 
-            {/* Right section: Notifications and Profile */}
+            {/* Right section: Actions */}
             <Stack 
               direction="row" 
-              spacing={2} 
+              spacing={1} 
               alignItems="center"
             >
-              <IconButton 
+              <IconButton
                 onClick={toggleNotifications}
-                sx={{ 
-                  color: '#1a1a1a',
-                  '&:hover': { 
-                    bgcolor: 'rgba(0, 0, 0, 0.04)' 
-                  }
-                }}
+                sx={{ color: '#1a1a1a' }}
               >
-                <Badge 
-                  badgeContent={unreadCount} 
-                  color="error"
-                  sx={{
-                    '& .MuiBadge-badge': {
-                      bgcolor: '#EF4444',
-                      fontSize: '0.75rem',
-                      height: 18,
-                      minWidth: 18,
-                      top: 2,
-                      right: 2
-                    }
-                  }}
-                >
+                <Badge badgeContent={unreadCount} color="error">
                   <NotificationsIcon />
                 </Badge>
               </IconButton>
 
-              <Box
+              <IconButton
                 onClick={handleClick}
-                sx={{ 
-                  display: 'flex',
-                  alignItems: 'center',
-                  cursor: 'pointer',
-                  borderRadius: 1,
-                  transition: 'all 0.2s ease',
-                  '&:hover': { 
-                    bgcolor: 'rgba(99, 102, 241, 0.04)',
+                sx={{
+                  padding: 0.5,
+                  border: '2px solid',
+                  borderColor: 'transparent',
+                  '&:hover': {
+                    borderColor: '#6366F1',
                   }
                 }}
               >
-                <Stack direction="row" spacing={1.5} alignItems="center" sx={{ p: 1 }}>
-                  <Avatar 
-                    src="https://images.unsplash.com/photo-1472099645785-5658abf4ff4e?ixlib=rb-1.2.1&auto=format&fit=facearea&facepad=2&w=256&h=256&q=80"
-                    sx={{ 
-                      width: 40, 
-                      height: 40,
-                      border: '2px solid',
-                      borderColor: '#6366F1'
-                    }}
-                  >
-                    {initials}
-                  </Avatar>
-                  {!isMobileOrTablet && (
-                    <Typography 
-                      variant="subtitle2" 
-                      sx={{ 
-                        color: '#1a1a1a',
-                        fontWeight: 600,
-                        fontSize: '0.875rem'
-                      }}
-                    >
-                      {fullName}
-                    </Typography>
-                  )}
-                </Stack>
-              </Box>
-
-              <UserMenu
-                anchorEl={anchorEl}
-                open={Boolean(anchorEl)}
-                onClose={handleClose}
-                onLogout={handleLogout}
-                userName={fullName}
-              />
+                <Avatar 
+                  sx={{ 
+                    bgcolor: '#6366F1',
+                    width: 32,
+                    height: 32,
+                    fontSize: 14,
+                    fontWeight: 600
+                  }}
+                >
+                  {initials}
+                </Avatar>
+              </IconButton>
             </Stack>
           </Toolbar>
         </Box>
       </AppBar>
 
-      <Toolbar /> {/* Add spacer for fixed AppBar */}
-
-      {/* Mobile Navigation Drawer */}
-      <MobileMenu 
-        open={mobileMenuOpen}
-        onClose={toggleMobileMenu}
-        navigationLinks={navigationLinks}
+      {/* Menus and Drawers */}
+      <UserMenu
+        anchorEl={anchorEl}
+        open={Boolean(anchorEl)}
+        onClose={handleClose}
+        onLogout={handleLogout}
+        userName={fullName}
       />
 
-      {/* Notifications Drawer */}
-      <NotificationDrawer 
+      <NotificationDrawer
         open={notificationsOpen}
-        onClose={toggleNotifications}
+        onClose={() => setNotificationsOpen(false)}
         notifications={mockNotifications}
+      />
+
+      <MobileMenu
+        open={mobileMenuOpen}
+        onClose={() => setMobileMenuOpen(false)}
       />
     </Box>
   );
