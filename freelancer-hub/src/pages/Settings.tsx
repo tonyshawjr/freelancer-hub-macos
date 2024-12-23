@@ -1,56 +1,122 @@
-import { useEffect } from 'react';
-import { Box, Paper, Typography, Divider, Grid } from '@mui/material';
+import { Box, Container, Tab, Tabs } from "@mui/material";
+import { useState } from "react";
+import { 
+  ProfileSection, 
+  BusinessSection, 
+  EmailSection,
+  ProjectSection,
+  TicketSection,
+  InvoiceSection,
+  IntegrationsSection,
+} from "../components/settings/sections";
 import PageTitle from '../components/common/PageTitle';
-import { useLocation } from 'react-router-dom';
 
-const Settings = () => {
-  const location = useLocation();
+interface TabPanelProps {
+  children?: React.ReactNode;
+  index: number;
+  value: number;
+}
 
-  useEffect(() => {
-    console.log('Settings component mounted at:', location.pathname);
-    
-    // Log the component tree
-    let parent = document.getElementById('root');
-    let tree = '';
-    while (parent) {
-      tree += parent.tagName + ' > ';
-      parent = parent.firstElementChild as HTMLElement;
-    }
-    console.log('Component tree:', tree);
-
-    // Log the current route state
-    console.log('Current route state:', {
-      pathname: location.pathname,
-      search: location.search,
-      hash: location.hash,
-      key: location.key,
-      state: location.state
-    });
-  }, [location]);
+function TabPanel(props: TabPanelProps) {
+  const { children, value, index, ...other } = props;
 
   return (
-    <Box>
-      <PageTitle>Settings</PageTitle>
-      
-      <Paper sx={{ p: 4, mt: 2 }}>
-        <Typography variant="h6" gutterBottom>
-          Account Settings
-        </Typography>
-        <Divider sx={{ mb: 3 }} />
-        
-        <Grid container spacing={3}>
-          <Grid item xs={12}>
-            <Typography variant="subtitle1" gutterBottom>
-              This is the settings page
-            </Typography>
-            <Typography color="text.secondary">
-              Settings content will go here
-            </Typography>
-          </Grid>
-        </Grid>
-      </Paper>
-    </Box>
+    <div
+      role="tabpanel"
+      hidden={value !== index}
+      id={`settings-tabpanel-${index}`}
+      aria-labelledby={`settings-tab-${index}`}
+      {...other}
+    >
+      {value === index && (
+        <Box sx={{ py: 3 }}>
+          {children}
+        </Box>
+      )}
+    </div>
   );
-};
+}
 
-export default Settings;
+function a11yProps(index: number) {
+  return {
+    id: `settings-tab-${index}`,
+    'aria-controls': `settings-tabpanel-${index}`,
+  };
+}
+
+export default function Settings() {
+  const [value, setValue] = useState(0);
+
+  const handleChange = (event: React.SyntheticEvent, newValue: number) => {
+    setValue(newValue);
+  };
+
+  return (
+    <Container maxWidth="xl" sx={{ maxWidth: '1280px !important' }}>
+      <Box sx={{ width: '100%' }}>
+        {/* Header */}
+        <Box sx={{ 
+          display: 'flex',
+          alignItems: 'center',
+          justifyContent: 'space-between',
+          mb: 4
+        }}>
+          <PageTitle>Settings</PageTitle>
+        </Box>
+
+        <Box sx={{ borderBottom: 1, borderColor: 'divider' }}>
+          <Tabs 
+            value={value} 
+            onChange={handleChange}
+            variant="scrollable"
+            scrollButtons="auto"
+            sx={{
+              '& .MuiTab-root': {
+                textTransform: 'none',
+                fontSize: '18px',
+                fontWeight: 500,
+                color: '#667085',
+                '&.Mui-selected': {
+                  color: '#101828',
+                  fontWeight: 600,
+                },
+              },
+              '& .MuiTabs-indicator': {
+                backgroundColor: '#6C5DD3',
+              },
+            }}
+          >
+            <Tab label="Profile" {...a11yProps(0)} />
+            <Tab label="Business" {...a11yProps(1)} />
+            <Tab label="Email" {...a11yProps(2)} />
+            <Tab label="Projects" {...a11yProps(3)} />
+            <Tab label="Tickets" {...a11yProps(4)} />
+            <Tab label="Invoices" {...a11yProps(5)} />
+            <Tab label="Integrations" {...a11yProps(6)} />
+          </Tabs>
+        </Box>
+        <TabPanel value={value} index={0}>
+          <ProfileSection />
+        </TabPanel>
+        <TabPanel value={value} index={1}>
+          <BusinessSection />
+        </TabPanel>
+        <TabPanel value={value} index={2}>
+          <EmailSection />
+        </TabPanel>
+        <TabPanel value={value} index={3}>
+          <ProjectSection />
+        </TabPanel>
+        <TabPanel value={value} index={4}>
+          <TicketSection />
+        </TabPanel>
+        <TabPanel value={value} index={5}>
+          <InvoiceSection />
+        </TabPanel>
+        <TabPanel value={value} index={6}>
+          <IntegrationsSection />
+        </TabPanel>
+      </Box>
+    </Container>
+  );
+}
