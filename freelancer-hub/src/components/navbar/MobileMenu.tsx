@@ -7,17 +7,16 @@ import {
   ListItemText,
 } from '@mui/material';
 import { Link as RouterLink } from 'react-router-dom';
+import { navigationLinks } from '../../data/navigationLinks';
 
 interface MobileMenuProps {
   open: boolean;
   onClose: () => void;
-  navigationLinks: Array<{ label: string; path: string; }>;
 }
 
 const MobileMenu: React.FC<MobileMenuProps> = ({
   open,
   onClose,
-  navigationLinks
 }) => {
   return (
     <Drawer

@@ -3,17 +3,18 @@ import {
   Menu,
   MenuItem,
   ListItemIcon,
-  Typography,
+  ListItemText,
   Divider,
   Box,
+  Typography,
 } from '@mui/material';
-import { Link as RouterLink } from 'react-router-dom';
-import PersonIcon from '@mui/icons-material/Person';
+import { useNavigate, useLocation } from 'react-router-dom';
 import SettingsIcon from '@mui/icons-material/Settings';
+import PersonIcon from '@mui/icons-material/Person';
 import LogoutIcon from '@mui/icons-material/Logout';
 
 interface UserMenuProps {
-  anchorEl: null | HTMLElement;
+  anchorEl: HTMLElement | null;
   open: boolean;
   onClose: () => void;
   onLogout: () => void;
@@ -25,58 +26,87 @@ const UserMenu: React.FC<UserMenuProps> = ({
   open,
   onClose,
   onLogout,
-  userName
+  userName,
 }) => {
+  const navigate = useNavigate();
+  const location = useLocation();
+
+  const handleNavigation = (path: string) => {
+    console.log('UserMenu: Attempting to navigate to:', path);
+    console.log('Current location:', location.pathname);
+    
+    onClose();
+    setTimeout(() => {
+      navigate(path);
+    }, 100);
+  };
+
   return (
     <Menu
       anchorEl={anchorEl}
-      id="account-menu"
+      id="user-menu"
       open={open}
       onClose={onClose}
       onClick={onClose}
+      transformOrigin={{ horizontal: 'right', vertical: 'top' }}
+      anchorOrigin={{ horizontal: 'right', vertical: 'bottom' }}
       PaperProps={{
         elevation: 0,
         sx: {
           width: 220,
+          mt: 1.5,
           overflow: 'visible',
           filter: 'drop-shadow(0px 2px 8px rgba(0,0,0,0.1))',
-          mt: 1.5,
-          '& .MuiMenuItem-root': {
-            px: 2,
-            py: 1.5,
-            '&:hover': {
-              bgcolor: 'rgba(99, 102, 241, 0.04)',
-            },
+          '&:before': {
+            content: '""',
+            display: 'block',
+            position: 'absolute',
+            top: 0,
+            right: 14,
+            width: 10,
+            height: 10,
+            bgcolor: 'background.paper',
+            transform: 'translateY(-50%) rotate(45deg)',
+            zIndex: 0,
           },
         },
       }}
-      transformOrigin={{ horizontal: 'right', vertical: 'top' }}
-      anchorOrigin={{ horizontal: 'right', vertical: 'bottom' }}
     >
       <Box sx={{ px: 2, py: 1.5 }}>
-        <Typography variant="subtitle1" sx={{ fontWeight: 600, color: '#1a1a1a' }}>
+        <Typography
+          variant="subtitle1"
+          sx={{
+            fontWeight: 600,
+            color: '#1a1a1a',
+          }}
+        >
           {userName}
         </Typography>
       </Box>
+
       <Divider />
-      <MenuItem component={RouterLink} to="/profile">
+
+      <MenuItem onClick={() => handleNavigation('/profile')} sx={{ py: 1.5 }}>
         <ListItemIcon>
-          <PersonIcon sx={{ color: '#6366F1' }} />
+          <PersonIcon fontSize="small" />
         </ListItemIcon>
-        <Typography variant="body2">Profile</Typography>
+        <ListItemText>Profile</ListItemText>
       </MenuItem>
-      <MenuItem component={RouterLink} to="/settings">
+
+      <MenuItem onClick={() => handleNavigation('/settings')} sx={{ py: 1.5 }}>
         <ListItemIcon>
-          <SettingsIcon sx={{ color: '#6366F1' }} />
+          <SettingsIcon fontSize="small" />
         </ListItemIcon>
-        <Typography variant="body2">Settings</Typography>
+        <ListItemText>Settings</ListItemText>
       </MenuItem>
+
       <Divider />
-      <MenuItem onClick={onLogout}>
+
+      <MenuItem onClick={onLogout} sx={{ py: 1.5 }}>
         <ListItemIcon>
-          <LogoutIcon sx={{ color: '#6366F1' }} />
+          <LogoutIcon fontSize="small" />
         </ListItemIcon>
-        <Typography variant="body2">Logout</Typography>
+        <ListItemText>Logout</ListItemText>
       </MenuItem>
     </Menu>
   );
