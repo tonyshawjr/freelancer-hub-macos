@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import {
   Box,
   TextField,
@@ -12,11 +12,28 @@ import {
   MenuItem,
   Switch,
   FormControlLabel,
+  Alert,
+  Snackbar,
+  Button,
+  CircularProgress,
 } from '@mui/material';
 import { PhotoCamera as PhotoCameraIcon } from '@mui/icons-material';
 import { SecondaryButton } from '../../common/buttons';
+import { useDatabase } from '../../../contexts/DatabaseContext';
+
+interface Profile {
+  id: string;
+  full_name: string;
+  title: string;
+  timezone: string;
+  avatar_url: string | null;
+}
 
 export default function ProfileSection() {
+  const { db } = useDatabase();
+  const [loading, setLoading] = useState(false);
+  const [message, setMessage] = useState<{ type: 'success' | 'error', text: string } | null>(null);
+  
   const [formData, setFormData] = useState({
     firstName: '',
     lastName: '',
@@ -26,7 +43,58 @@ export default function ProfileSection() {
     timeZone: 'UTC',
     language: 'en',
     twoFactorEnabled: false,
+    avatarUrl: null as string | null,
   });
+
+  useEffect(() => {
+    if (db) {
+      loadProfile();
+    }
+  }, [db]);
+
+  const loadProfile = async () => {
+    try {
+      // First check if we have an authenticated user
+      const { data: { user }, error: userError } = await db.client.auth.getUser();
+      if (userError) throw userError;
+      if (!user) {
+        setMessage({ type: 'error', text: 'Please sign in to view your profile' });
+        return;
+      }
+
+      // Try to get the profile
+      const { data, error } = await db.from('profiles', true) // Use admin client
+        .select('*')
+        .eq('id', user.id)
+        .single();
+
+      if (error) {
+        // If table doesn't exist, just use defaults
+        if (error.code === '42P01') {
+          return;
+        }
+        throw error;
+      }
+
+      if (data) {
+        const names = data.full_name?.split(' ') || ['', ''];
+        setFormData(prev => ({
+          ...prev,
+          firstName: names[0] || '',
+          lastName: names.slice(1).join(' ') || '',
+          timeZone: data.timezone || 'UTC',
+          avatarUrl: data.avatar_url,
+        }));
+      }
+    } catch (error) {
+      console.error('Error loading profile:', error);
+      if (error.message === 'Auth session missing!') {
+        setMessage({ type: 'error', text: 'Please sign in to view your profile' });
+      } else {
+        setMessage({ type: 'error', text: 'Failed to load profile' });
+      }
+    }
+  };
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const { name, value } = e.target;
@@ -50,11 +118,109 @@ export default function ProfileSection() {
     }));
   };
 
+  const handleSave = async () => {
+    if (!db) return;
+    
+    setLoading(true);
+    try {
+      // Get the user's ID from auth
+      const { data: { user }, error: userError } = await db.client.auth.getUser();
+      if (userError) throw userError;
+      if (!user) {
+        setMessage({ type: 'error', text: 'Please sign in to update your profile' });
+        return;
+      }
+
+      // Try to create/update the profile
+      const { error } = await db.from('profiles', true) // Use admin client
+        .upsert({
+          id: user.id,
+          full_name: `${formData.firstName} ${formData.lastName}`.trim(),
+          timezone: formData.timeZone,
+          updated_at: new Date().toISOString(),
+        }, {
+          onConflict: 'id'
+        });
+
+      if (error) {
+        // If table doesn't exist, show a more helpful message
+        if (error.code === '42P01') {
+          setMessage({ type: 'error', text: 'Database setup required. Please run migrations first.' });
+          return;
+        }
+        throw error;
+      }
+
+      setMessage({ type: 'success', text: 'Profile updated successfully' });
+    } catch (error) {
+      console.error('Error updating profile:', error);
+      if (error.message === 'Auth session missing!') {
+        setMessage({ type: 'error', text: 'Please sign in to update your profile' });
+      } else {
+        setMessage({ type: 'error', text: 'Failed to update profile' });
+      }
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  const handleAvatarChange = async (event: React.ChangeEvent<HTMLInputElement>) => {
+    if (!event.target.files || !event.target.files[0] || !db) return;
+    
+    const file = event.target.files[0];
+    const fileExt = file.name.split('.').pop();
+    const { data: { user }, error: userError } = await db.client.auth.getUser();
+    if (userError || !user) {
+      setMessage({ type: 'error', text: 'Failed to get user information' });
+      return;
+    }
+
+    const filePath = `${user.id}/avatar.${fileExt}`;
+
+    setLoading(true);
+    try {
+      // Upload image
+      const { error: uploadError } = await db.storage
+        .from('avatars')
+        .upload(filePath, file, { upsert: true });
+
+      if (uploadError) throw uploadError;
+
+      // Get public URL
+      const { data } = db.storage
+        .from('avatars')
+        .getPublicUrl(filePath);
+
+      // Update profile with admin client
+      const { error: updateError } = await db.from('profiles', true)
+        .upsert({
+          id: user.id,
+          avatar_url: data.publicUrl,
+          updated_at: new Date().toISOString(),
+        });
+
+      if (updateError) throw updateError;
+
+      setFormData(prev => ({
+        ...prev,
+        avatarUrl: data.publicUrl,
+      }));
+      
+      setMessage({ type: 'success', text: 'Avatar updated successfully' });
+    } catch (error) {
+      console.error('Error uploading avatar:', error);
+      setMessage({ type: 'error', text: 'Failed to update avatar' });
+    } finally {
+      setLoading(false);
+    }
+  };
+
   return (
     <Box>
       <Box sx={{ display: 'flex', alignItems: 'center', gap: 2, mb: 4 }}>
         <Box sx={{ position: 'relative' }}>
           <Avatar
+            src={formData.avatarUrl || undefined}
             sx={{ 
               width: 72, 
               height: 72,
@@ -64,9 +230,10 @@ export default function ProfileSection() {
               fontWeight: 500
             }}
           >
-            P
+            {formData.firstName ? formData.firstName[0].toUpperCase() : 'P'}
           </Avatar>
           <IconButton
+            component="label"
             sx={{
               position: 'absolute',
               bottom: -4,
@@ -81,6 +248,12 @@ export default function ProfileSection() {
             }}
             size="small"
           >
+            <input
+              hidden
+              accept="image/*"
+              type="file"
+              onChange={handleAvatarChange}
+            />
             <PhotoCameraIcon sx={{ fontSize: 16 }} />
           </IconButton>
         </Box>
@@ -169,7 +342,7 @@ export default function ProfileSection() {
                 name="email"
                 type="email"
                 value={formData.email}
-                onChange={handleChange}
+                disabled
                 fullWidth
                 variant="outlined"
                 sx={{
@@ -212,41 +385,36 @@ export default function ProfileSection() {
           
           <Stack spacing={3}>
             <Box sx={{ display: 'flex', gap: 3 }}>
-              <FormControl 
-                fullWidth
-                sx={{
-                  '& .MuiOutlinedInput-root': {
-                    borderRadius: '8px',
-                    backgroundColor: '#fff',
-                  }
-                }}
-              >
-                <InputLabel>Time Zone</InputLabel>
+              <FormControl fullWidth>
+                <InputLabel id="timezone-label">Time Zone</InputLabel>
                 <Select
+                  labelId="timezone-label"
                   value={formData.timeZone}
                   label="Time Zone"
                   onChange={handleSelectChange('timeZone')}
-                >
-                  <MenuItem value="UTC">UTC</MenuItem>
-                  <MenuItem value="EST">Eastern Time</MenuItem>
-                  <MenuItem value="CST">Central Time</MenuItem>
-                  <MenuItem value="PST">Pacific Time</MenuItem>
-                </Select>
-              </FormControl>
-              <FormControl 
-                fullWidth
-                sx={{
-                  '& .MuiOutlinedInput-root': {
+                  sx={{
                     borderRadius: '8px',
                     backgroundColor: '#fff',
-                  }
-                }}
-              >
-                <InputLabel>Language</InputLabel>
+                  }}
+                >
+                  <MenuItem value="UTC">UTC</MenuItem>
+                  <MenuItem value="EST">EST</MenuItem>
+                  <MenuItem value="PST">PST</MenuItem>
+                  <MenuItem value="GMT">GMT</MenuItem>
+                </Select>
+              </FormControl>
+
+              <FormControl fullWidth>
+                <InputLabel id="language-label">Language</InputLabel>
                 <Select
+                  labelId="language-label"
                   value={formData.language}
                   label="Language"
                   onChange={handleSelectChange('language')}
+                  sx={{
+                    borderRadius: '8px',
+                    backgroundColor: '#fff',
+                  }}
                 >
                   <MenuItem value="en">English</MenuItem>
                   <MenuItem value="es">Spanish</MenuItem>
@@ -271,56 +439,54 @@ export default function ProfileSection() {
           </Typography>
           
           <Stack spacing={3}>
-            <SecondaryButton
-              sx={{ 
-                alignSelf: 'flex-start',
-                display: 'flex',
-                alignItems: 'center',
-                gap: 1,
-                padding: '10px 16px',
-                color: '#344054',
-                borderColor: '#D0D5DD',
-                '&:hover': {
-                  borderColor: '#D0D5DD',
-                  backgroundColor: '#F9FAFB',
-                }
-              }}
-            >
-              <Box component="span" sx={{ display: 'flex', alignItems: 'center' }}>
-                🔒
-              </Box>
-              Change Password
+            <SecondaryButton>
+              🔒 Change Password
             </SecondaryButton>
-            
+
             <FormControlLabel
               control={
                 <Switch
                   checked={formData.twoFactorEnabled}
                   onChange={handleSwitchChange('twoFactorEnabled')}
-                  sx={{
-                    '& .MuiSwitch-switchBase.Mui-checked': {
-                      color: '#6C5DD3',
-                      '&:hover': {
-                        backgroundColor: 'rgba(108, 93, 211, 0.08)',
-                      },
-                    },
-                    '& .MuiSwitch-switchBase.Mui-checked + .MuiSwitch-track': {
-                      backgroundColor: '#6C5DD3',
-                    },
-                  }}
                 />
               }
               label="Enable Two-Factor Authentication"
-              sx={{
-                '& .MuiFormControlLabel-label': {
-                  fontSize: '14px',
-                  color: '#344054',
-                }
-              }}
             />
           </Stack>
         </Box>
+
+        <Box sx={{ display: 'flex', justifyContent: 'flex-end', mt: 2 }}>
+          <Button
+            variant="contained"
+            onClick={handleSave}
+            disabled={loading}
+            startIcon={loading ? <CircularProgress size={20} /> : null}
+            sx={{
+              bgcolor: '#7F56D9',
+              '&:hover': {
+                bgcolor: '#6941C6',
+              },
+            }}
+          >
+            {loading ? 'Saving...' : 'Save Changes'}
+          </Button>
+        </Box>
       </Stack>
+
+      <Snackbar
+        open={!!message}
+        autoHideDuration={6000}
+        onClose={() => setMessage(null)}
+        anchorOrigin={{ vertical: 'bottom', horizontal: 'right' }}
+      >
+        <Alert
+          onClose={() => setMessage(null)}
+          severity={message?.type}
+          sx={{ width: '100%' }}
+        >
+          {message?.text}
+        </Alert>
+      </Snackbar>
     </Box>
   );
 }

@@ -1,27 +1,32 @@
-import { BrowserRouter } from 'react-router-dom';
 import { ThemeProvider } from '@mui/material/styles';
-import CssBaseline from '@mui/material/CssBaseline';
-import { theme } from './theme';
-import GlobalStyles from './styles/GlobalStyles';
-import Router from './routes';
+import { CssBaseline, GlobalStyles } from '@mui/material';
+import { BrowserRouter } from 'react-router-dom';
 import { LocalizationProvider } from '@mui/x-date-pickers';
 import { AdapterDateFns } from '@mui/x-date-pickers/AdapterDateFns';
-import { MockDataProvider } from './context/MockDataContext';
+import { theme } from './theme';
+import { MockDataProvider } from './contexts/MockDataContext';
+import { DatabaseProvider } from './contexts/DatabaseContext';
+import { AuthProvider } from './contexts/AuthContext';
+import Router from './routes';
 
-const App = () => {
+function App() {
   return (
-    <ThemeProvider theme={theme}>
-      <LocalizationProvider dateAdapter={AdapterDateFns}>
-        <CssBaseline />
-        <GlobalStyles />
-        <MockDataProvider>
-          <BrowserRouter>
-            <Router />
-          </BrowserRouter>
-        </MockDataProvider>
-      </LocalizationProvider>
-    </ThemeProvider>
+    <DatabaseProvider>
+      <AuthProvider>
+        <ThemeProvider theme={theme}>
+          <LocalizationProvider dateAdapter={AdapterDateFns}>
+            <CssBaseline />
+            <GlobalStyles />
+            <MockDataProvider>
+              <BrowserRouter>
+                <Router />
+              </BrowserRouter>
+            </MockDataProvider>
+          </LocalizationProvider>
+        </ThemeProvider>
+      </AuthProvider>
+    </DatabaseProvider>
   );
-};
+}
 
 export default App;
