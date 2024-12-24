@@ -1,3 +1,5 @@
+import React from 'react';
+import { Navigate } from 'react-router-dom';
 import { Box, Container, Tab, Tabs } from "@mui/material";
 import { useState } from "react";
 import { 
@@ -10,6 +12,7 @@ import {
   IntegrationsSection,
 } from "../components/settings/sections";
 import PageTitle from '../components/common/PageTitle';
+import { useDatabase } from '../contexts/DatabaseContext';
 
 interface TabPanelProps {
   children?: React.ReactNode;
@@ -45,11 +48,39 @@ function a11yProps(index: number) {
 }
 
 export default function Settings() {
+  const { db } = useDatabase();
+  const [isAuthenticated, setIsAuthenticated] = useState<boolean | null>(null);
+
   const [value, setValue] = useState(0);
 
   const handleChange = (event: React.SyntheticEvent, newValue: number) => {
     setValue(newValue);
   };
+
+  React.useEffect(() => {
+    const checkAuth = async () => {
+      if (!db) return;
+      try {
+        const { data: { user }, error } = await db.client.auth.getUser();
+        setIsAuthenticated(!!user && !error);
+      } catch (error) {
+        console.error('Error checking auth:', error);
+        setIsAuthenticated(false);
+      }
+    };
+
+    checkAuth();
+  }, [db]);
+
+  // Show nothing while checking auth
+  if (isAuthenticated === null) {
+    return null;
+  }
+
+  // Redirect to login if not authenticated
+  if (!isAuthenticated) {
+    return <Navigate to="/login" />;
+  }
 
   return (
     <Container maxWidth="xl" sx={{ maxWidth: '1280px !important' }}>

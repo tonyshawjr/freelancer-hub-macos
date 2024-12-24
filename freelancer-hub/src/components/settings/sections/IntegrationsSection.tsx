@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import {
   Box,
   Typography,
@@ -20,6 +20,8 @@ import {
 } from '@mui/material';
 import ExpandMoreIcon from '@mui/icons-material/ExpandMore';
 import { PrimaryButton } from '../../common/buttons';
+import { secureStorage, StorageKey } from '../../../utils/storage';
+import { useDatabase } from '../../../contexts/DatabaseContext';
 
 interface DatabaseConfig {
   provider: 'supabase' | 'firebase' | 'mysql';
@@ -67,6 +69,7 @@ interface StorageProvider {
 }
 
 export default function IntegrationsSection() {
+  const { db, setProvider } = useDatabase();
   const [formData, setFormData] = useState({
     database: {
       provider: 'supabase',
@@ -92,19 +95,18 @@ export default function IntegrationsSection() {
         ssl: true,
       },
     } as DatabaseConfig,
-    
     paymentGateways: [
       {
-        id: '1',
+        id: 'stripe',
         name: 'Stripe',
-        enabled: true,
+        enabled: false,
         apiKey: '',
         secretKey: '',
         webhookUrl: '',
         testMode: true,
       },
       {
-        id: '2',
+        id: 'paypal',
         name: 'PayPal',
         enabled: false,
         apiKey: '',
@@ -113,19 +115,18 @@ export default function IntegrationsSection() {
         testMode: true,
       },
     ] as PaymentGateway[],
-    
-    storage: [
+    storageProviders: [
       {
-        id: '1',
-        name: 'AWS S3',
-        enabled: true,
+        id: 'aws',
+        name: 'Amazon S3',
+        enabled: false,
         accessKey: '',
         secretKey: '',
         bucket: '',
         region: 'us-east-1',
       },
       {
-        id: '2',
+        id: 'gcp',
         name: 'Google Cloud Storage',
         enabled: false,
         accessKey: '',
@@ -136,47 +137,144 @@ export default function IntegrationsSection() {
     ] as StorageProvider[],
   });
 
-  const handleChange = (section: string, subsection: string | null, field: string, value: any) => {
-    if (subsection) {
-      setFormData(prev => ({
-        ...prev,
-        [section]: {
-          ...prev[section as keyof typeof prev],
-          [subsection]: {
-            ...prev[section as keyof typeof prev][subsection],
-            [field]: value
-          }
-        }
-      }));
-    } else {
-      setFormData(prev => ({
-        ...prev,
-        [section]: {
-          ...prev[section as keyof typeof prev],
-          [field]: value
-        }
-      }));
-    }
-  };
+  const [testingConnection, setTestingConnection] = useState(false);
+  const [testResult, setTestResult] = useState<{ success: boolean; message: string } | null>(null);
 
-  const handleDatabaseProviderChange = (provider: 'supabase' | 'firebase' | 'mysql') => {
+  useEffect(() => {
+    // Load saved database configuration
+    const savedProvider = secureStorage.get(StorageKey.DATABASE_PROVIDER);
+    if (savedProvider === 'supabase') {
+      const url = secureStorage.get(StorageKey.SUPABASE_URL);
+      const anonKey = secureStorage.get(StorageKey.SUPABASE_ANON_KEY);
+      const serviceRoleKey = secureStorage.get(StorageKey.SUPABASE_SERVICE_ROLE_KEY);
+      
+      if (url || anonKey || serviceRoleKey) {
+        setFormData(prev => ({
+          ...prev,
+          database: {
+            ...prev.database,
+            provider: 'supabase',
+            supabase: {
+              url: url || '',
+              anonKey: anonKey || '',
+              serviceRoleKey: serviceRoleKey || '',
+            },
+          },
+        }));
+      }
+    }
+  }, []);
+
+  const handleDatabaseChange = (field: string, value: string) => {
     setFormData(prev => ({
       ...prev,
       database: {
         ...prev.database,
-        provider
-      }
+        [prev.database.provider]: {
+          ...prev.database[prev.database.provider],
+          [field]: value,
+        },
+      },
+    }));
+  };
+
+  const handleProviderChange = (event: React.ChangeEvent<HTMLInputElement>) => {
+    const newProvider = event.target.value as DatabaseConfig['provider'];
+    setFormData(prev => ({
+      ...prev,
+      database: {
+        ...prev.database,
+        provider: newProvider,
+      },
+    }));
+  };
+
+  const handlePaymentGatewayChange = (id: string, field: string, value: any) => {
+    setFormData(prev => ({
+      ...prev,
+      paymentGateways: prev.paymentGateways.map(gateway =>
+        gateway.id === id ? { ...gateway, [field]: value } : gateway
+      ),
+    }));
+  };
+
+  const handleStorageProviderChange = (id: string, field: string, value: any) => {
+    setFormData(prev => ({
+      ...prev,
+      storageProviders: prev.storageProviders.map(provider =>
+        provider.id === id ? { ...provider, [field]: value } : provider
+      ),
     }));
   };
 
   const handleTestConnection = async () => {
-    // TODO: Implement connection test logic
-    console.log('Testing connection...');
+    setTestingConnection(true);
+    setTestResult(null);
+
+    try {
+      const { provider } = formData.database;
+      const config = formData.database[provider];
+
+      if (provider === 'supabase' && config) {
+        const { url, anonKey } = config;
+        if (!url || !anonKey) {
+          throw new Error('Please fill in all required fields');
+        }
+
+        // Test the connection by attempting to initialize the database
+        await setProvider('supabase', { url, anonKey });
+        setTestResult({
+          success: true,
+          message: 'Successfully connected to Supabase!',
+        });
+      }
+    } catch (error) {
+      setTestResult({
+        success: false,
+        message: error instanceof Error ? error.message : 'Failed to connect to database',
+      });
+    } finally {
+      setTestingConnection(false);
+    }
+  };
+
+  const handleSaveDatabase = async () => {
+    const { provider } = formData.database;
+    const config = formData.database[provider];
+
+    if (provider === 'supabase' && config) {
+      const { url, anonKey, serviceRoleKey } = config;
+      
+      try {
+        // Save to secure storage
+        secureStorage.set(StorageKey.DATABASE_PROVIDER, provider);
+        secureStorage.set(StorageKey.SUPABASE_URL, url);
+        secureStorage.set(StorageKey.SUPABASE_ANON_KEY, anonKey);
+        if (serviceRoleKey) {
+          secureStorage.set(StorageKey.SUPABASE_SERVICE_ROLE_KEY, serviceRoleKey);
+        }
+
+        // Initialize the database with new credentials
+        await setProvider('supabase', { url, anonKey });
+        
+        setTestResult({
+          success: true,
+          message: 'Database configuration saved successfully!',
+        });
+      } catch (error) {
+        console.error('Error saving database configuration:', error);
+        setTestResult({
+          success: false,
+          message: 'Failed to save database configuration. Please check your credentials.',
+        });
+      }
+    }
   };
 
   return (
     <Box>
       <Stack spacing={3}>
+        {/* Database Configuration */}
         <Accordion defaultExpanded>
           <AccordionSummary 
             expandIcon={<ExpandMoreIcon />}
@@ -213,7 +311,7 @@ export default function IntegrationsSection() {
               <FormControl component="fieldset">
                 <RadioGroup
                   value={formData.database.provider}
-                  onChange={(e) => handleDatabaseProviderChange(e.target.value as 'supabase' | 'firebase' | 'mysql')}
+                  onChange={handleProviderChange}
                 >
                   <FormControlLabel 
                     value="supabase" 
@@ -238,6 +336,7 @@ export default function IntegrationsSection() {
                         </Typography>
                       </Box>
                     }
+                    disabled
                   />
                   <FormControlLabel 
                     value="mysql" 
@@ -250,182 +349,89 @@ export default function IntegrationsSection() {
                         </Typography>
                       </Box>
                     }
+                    disabled
                   />
                 </RadioGroup>
               </FormControl>
 
-              {formData.database.provider === 'supabase' ? (
+              {formData.database.provider === 'supabase' && (
                 <Box>
-                  <Typography variant="subtitle1" sx={{ mb: 2, fontWeight: 500 }}>Supabase Configuration</Typography>
+                  <Typography variant="subtitle1" sx={{ mb: 2, fontWeight: 500 }}>
+                    Supabase Configuration
+                  </Typography>
                   <Stack spacing={3}>
                     <TextField
                       label="Project URL"
-                      value={formData.database.supabase?.url}
-                      onChange={(e) => handleChange('database', 'supabase', 'url', e.target.value)}
+                      value={formData.database.supabase?.url || ''}
+                      onChange={(e) => handleDatabaseChange('url', e.target.value)}
                       fullWidth
                       helperText="Your Supabase project URL (e.g., https://xxx.supabase.co)"
                     />
                     <TextField
                       label="Anon Public Key"
-                      value={formData.database.supabase?.anonKey}
-                      onChange={(e) => handleChange('database', 'supabase', 'anonKey', e.target.value)}
+                      value={formData.database.supabase?.anonKey || ''}
+                      onChange={(e) => handleDatabaseChange('anonKey', e.target.value)}
                       fullWidth
                       helperText="Your project's anon/public key"
                     />
                     <TextField
                       label="Service Role Key"
-                      value={formData.database.supabase?.serviceRoleKey}
-                      onChange={(e) => handleChange('database', 'supabase', 'serviceRoleKey', e.target.value)}
+                      value={formData.database.supabase?.serviceRoleKey || ''}
+                      onChange={(e) => handleDatabaseChange('serviceRoleKey', e.target.value)}
                       fullWidth
                       type="password"
                       helperText="Your project's service_role key (keep this secret!)"
                     />
-                  </Stack>
-                </Box>
-              ) : formData.database.provider === 'firebase' ? (
-                <Box>
-                  <Typography variant="subtitle1" sx={{ mb: 2, fontWeight: 500 }}>Firebase Configuration</Typography>
-                  <Stack spacing={3}>
-                    <TextField
-                      label="API Key"
-                      value={formData.database.firebase?.apiKey}
-                      onChange={(e) => handleChange('database', 'firebase', 'apiKey', e.target.value)}
-                      fullWidth
-                      helperText="Your Firebase API key"
-                    />
-                    <TextField
-                      label="Auth Domain"
-                      value={formData.database.firebase?.authDomain}
-                      onChange={(e) => handleChange('database', 'firebase', 'authDomain', e.target.value)}
-                      fullWidth
-                      helperText="Your Firebase auth domain"
-                    />
-                    <TextField
-                      label="Project ID"
-                      value={formData.database.firebase?.projectId}
-                      onChange={(e) => handleChange('database', 'firebase', 'projectId', e.target.value)}
-                      fullWidth
-                      helperText="Your Firebase project ID"
-                    />
-                    <TextField
-                      label="Storage Bucket"
-                      value={formData.database.firebase?.storageBucket}
-                      onChange={(e) => handleChange('database', 'firebase', 'storageBucket', e.target.value)}
-                      fullWidth
-                      helperText="Your Firebase storage bucket"
-                    />
-                    <TextField
-                      label="Messaging Sender ID"
-                      value={formData.database.firebase?.messagingSenderId}
-                      onChange={(e) => handleChange('database', 'firebase', 'messagingSenderId', e.target.value)}
-                      fullWidth
-                      helperText="Your Firebase messaging sender ID"
-                    />
-                    <TextField
-                      label="App ID"
-                      value={formData.database.firebase?.appId}
-                      onChange={(e) => handleChange('database', 'firebase', 'appId', e.target.value)}
-                      fullWidth
-                      helperText="Your Firebase app ID"
-                    />
-                  </Stack>
-                </Box>
-              ) : (
-                <Box>
-                  <Typography variant="subtitle1" sx={{ mb: 2, fontWeight: 500 }}>MySQL Configuration</Typography>
-                  <Stack spacing={3}>
-                    <TextField
-                      label="Host"
-                      value={formData.database.mysql?.host}
-                      onChange={(e) => handleChange('database', 'mysql', 'host', e.target.value)}
-                      fullWidth
-                      helperText="Database host (e.g., localhost or IP address)"
-                    />
-                    <TextField
-                      label="Port"
-                      type="number"
-                      value={formData.database.mysql?.port}
-                      onChange={(e) => handleChange('database', 'mysql', 'port', parseInt(e.target.value))}
-                      fullWidth
-                      helperText="Database port (default: 3306)"
-                    />
-                    <TextField
-                      label="Database Name"
-                      value={formData.database.mysql?.database}
-                      onChange={(e) => handleChange('database', 'mysql', 'database', e.target.value)}
-                      fullWidth
-                      helperText="Name of the database to connect to"
-                    />
-                    <TextField
-                      label="Username"
-                      value={formData.database.mysql?.username}
-                      onChange={(e) => handleChange('database', 'mysql', 'username', e.target.value)}
-                      fullWidth
-                      helperText="Database user username"
-                    />
-                    <TextField
-                      label="Password"
-                      type="password"
-                      value={formData.database.mysql?.password}
-                      onChange={(e) => handleChange('database', 'mysql', 'password', e.target.value)}
-                      fullWidth
-                      helperText="Database user password"
-                    />
-                    <FormControlLabel
-                      control={
-                        <Switch
-                          checked={formData.database.mysql?.ssl || false}
-                          onChange={(e) => handleChange('database', 'mysql', 'ssl', e.target.checked)}
-                        />
-                      }
-                      label="Enable SSL/TLS Connection"
-                    />
+
+                    {testResult && (
+                      <Alert 
+                        severity={testResult.success ? "success" : "error"}
+                        sx={{ mt: 2 }}
+                      >
+                        {testResult.message}
+                      </Alert>
+                    )}
+
+                    <Box sx={{ display: 'flex', gap: 2, mt: 2 }}>
+                      <Button
+                        variant="outlined"
+                        onClick={handleTestConnection}
+                        disabled={testingConnection}
+                        sx={{
+                          borderColor: '#D0D5DD',
+                          color: '#344054',
+                          '&:hover': {
+                            borderColor: '#98A2B3',
+                            backgroundColor: '#F9FAFB',
+                          }
+                        }}
+                      >
+                        {testingConnection ? 'Testing...' : 'Test Connection'}
+                      </Button>
+                      <PrimaryButton onClick={handleSaveDatabase}>
+                        Save Changes
+                      </PrimaryButton>
+                    </Box>
                   </Stack>
                 </Box>
               )}
 
-              <Alert severity="info" sx={{ mt: 2 }}>
-                {formData.database.provider === 'supabase' ? (
-                  <>
-                    You can find these credentials in your Supabase project settings under Project Settings → API.
-                    Make sure to keep your service role key secret and never expose it in client-side code.
-                  </>
-                ) : formData.database.provider === 'firebase' ? (
-                  <>
-                    You can find these credentials in your Firebase console under Project Settings → General.
-                    Download your Firebase configuration object and copy the values here.
-                  </>
-                ) : (
-                  <>
-                    Make sure your MySQL server is properly configured and accessible from your application.
-                    We recommend using SSL/TLS for secure connections and storing credentials securely.
-                  </>
-                )}
-              </Alert>
+              {formData.database.provider === 'firebase' && (
+                <Alert severity="info">
+                  Firebase integration coming soon!
+                </Alert>
+              )}
 
-              <Box sx={{ display: 'flex', gap: 2, mt: 2 }}>
-                <Button
-                  variant="outlined"
-                  onClick={handleTestConnection}
-                  sx={{
-                    borderColor: '#D0D5DD',
-                    color: '#344054',
-                    '&:hover': {
-                      borderColor: '#98A2B3',
-                      backgroundColor: '#F9FAFB',
-                    }
-                  }}
-                >
-                  Test Connection
-                </Button>
-                <PrimaryButton>
-                  Save Changes
-                </PrimaryButton>
-              </Box>
+              {formData.database.provider === 'mysql' && (
+                <Alert severity="info">
+                  MySQL integration coming soon!
+                </Alert>
+              )}
             </Stack>
           </AccordionDetails>
         </Accordion>
 
+        {/* Payment Gateways */}
         <Accordion>
           <AccordionSummary 
             expandIcon={<ExpandMoreIcon />}
@@ -459,7 +465,7 @@ export default function IntegrationsSection() {
           </AccordionSummary>
           <AccordionDetails>
             <Stack spacing={4}>
-              {formData.paymentGateways.map((gateway, index) => (
+              {formData.paymentGateways.map((gateway) => (
                 <Box key={gateway.id}>
                   <Typography
                     sx={{
@@ -477,14 +483,7 @@ export default function IntegrationsSection() {
                       control={
                         <Switch
                           checked={gateway.enabled}
-                          onChange={(e) => {
-                            const newGateways = [...formData.paymentGateways];
-                            newGateways[index].enabled = e.target.checked;
-                            setFormData(prev => ({
-                              ...prev,
-                              paymentGateways: newGateways
-                            }));
-                          }}
+                          onChange={(e) => handlePaymentGatewayChange(gateway.id, 'enabled', e.target.checked)}
                         />
                       }
                       label="Enable Integration"
@@ -495,58 +494,27 @@ export default function IntegrationsSection() {
                         <TextField
                           label="API Key"
                           value={gateway.apiKey}
-                          onChange={(e) => {
-                            const newGateways = [...formData.paymentGateways];
-                            newGateways[index].apiKey = e.target.value;
-                            setFormData(prev => ({
-                              ...prev,
-                              paymentGateways: newGateways
-                            }));
-                          }}
+                          onChange={(e) => handlePaymentGatewayChange(gateway.id, 'apiKey', e.target.value)}
                           fullWidth
                         />
-                        
                         <TextField
                           label="Secret Key"
                           type="password"
                           value={gateway.secretKey}
-                          onChange={(e) => {
-                            const newGateways = [...formData.paymentGateways];
-                            newGateways[index].secretKey = e.target.value;
-                            setFormData(prev => ({
-                              ...prev,
-                              paymentGateways: newGateways
-                            }));
-                          }}
+                          onChange={(e) => handlePaymentGatewayChange(gateway.id, 'secretKey', e.target.value)}
                           fullWidth
                         />
-                        
                         <TextField
                           label="Webhook URL"
                           value={gateway.webhookUrl}
-                          onChange={(e) => {
-                            const newGateways = [...formData.paymentGateways];
-                            newGateways[index].webhookUrl = e.target.value;
-                            setFormData(prev => ({
-                              ...prev,
-                              paymentGateways: newGateways
-                            }));
-                          }}
+                          onChange={(e) => handlePaymentGatewayChange(gateway.id, 'webhookUrl', e.target.value)}
                           fullWidth
                         />
-                        
                         <FormControlLabel
                           control={
                             <Switch
                               checked={gateway.testMode}
-                              onChange={(e) => {
-                                const newGateways = [...formData.paymentGateways];
-                                newGateways[index].testMode = e.target.checked;
-                                setFormData(prev => ({
-                                  ...prev,
-                                  paymentGateways: newGateways
-                                }));
-                              }}
+                              onChange={(e) => handlePaymentGatewayChange(gateway.id, 'testMode', e.target.checked)}
                             />
                           }
                           label="Test Mode"
@@ -560,6 +528,7 @@ export default function IntegrationsSection() {
           </AccordionDetails>
         </Accordion>
 
+        {/* Storage Providers */}
         <Accordion>
           <AccordionSummary 
             expandIcon={<ExpandMoreIcon />}
@@ -593,7 +562,7 @@ export default function IntegrationsSection() {
           </AccordionSummary>
           <AccordionDetails>
             <Stack spacing={4}>
-              {formData.storage.map((provider, index) => (
+              {formData.storageProviders.map((provider) => (
                 <Box key={provider.id}>
                   <Typography
                     sx={{
@@ -611,14 +580,7 @@ export default function IntegrationsSection() {
                       control={
                         <Switch
                           checked={provider.enabled}
-                          onChange={(e) => {
-                            const newProviders = [...formData.storage];
-                            newProviders[index].enabled = e.target.checked;
-                            setFormData(prev => ({
-                              ...prev,
-                              storage: newProviders
-                            }));
-                          }}
+                          onChange={(e) => handleStorageProviderChange(provider.id, 'enabled', e.target.checked)}
                         />
                       }
                       label="Enable Integration"
@@ -629,59 +591,28 @@ export default function IntegrationsSection() {
                         <TextField
                           label="Access Key"
                           value={provider.accessKey}
-                          onChange={(e) => {
-                            const newProviders = [...formData.storage];
-                            newProviders[index].accessKey = e.target.value;
-                            setFormData(prev => ({
-                              ...prev,
-                              storage: newProviders
-                            }));
-                          }}
+                          onChange={(e) => handleStorageProviderChange(provider.id, 'accessKey', e.target.value)}
                           fullWidth
                         />
-                        
                         <TextField
                           label="Secret Key"
                           type="password"
                           value={provider.secretKey}
-                          onChange={(e) => {
-                            const newProviders = [...formData.storage];
-                            newProviders[index].secretKey = e.target.value;
-                            setFormData(prev => ({
-                              ...prev,
-                              storage: newProviders
-                            }));
-                          }}
+                          onChange={(e) => handleStorageProviderChange(provider.id, 'secretKey', e.target.value)}
                           fullWidth
                         />
-                        
                         <TextField
-                          label="Bucket Name"
+                          label="Bucket"
                           value={provider.bucket}
-                          onChange={(e) => {
-                            const newProviders = [...formData.storage];
-                            newProviders[index].bucket = e.target.value;
-                            setFormData(prev => ({
-                              ...prev,
-                              storage: newProviders
-                            }));
-                          }}
+                          onChange={(e) => handleStorageProviderChange(provider.id, 'bucket', e.target.value)}
                           fullWidth
                         />
-                        
                         <FormControl fullWidth>
                           <InputLabel>Region</InputLabel>
                           <Select
                             value={provider.region}
                             label="Region"
-                            onChange={(e) => {
-                              const newProviders = [...formData.storage];
-                              newProviders[index].region = e.target.value;
-                              setFormData(prev => ({
-                                ...prev,
-                                storage: newProviders
-                              }));
-                            }}
+                            onChange={(e) => handleStorageProviderChange(provider.id, 'region', e.target.value)}
                           >
                             <MenuItem value="us-east-1">US East (N. Virginia)</MenuItem>
                             <MenuItem value="us-west-1">US West (N. California)</MenuItem>
@@ -697,12 +628,6 @@ export default function IntegrationsSection() {
             </Stack>
           </AccordionDetails>
         </Accordion>
-
-        <Box sx={{ display: 'flex', justifyContent: 'flex-end', mt: 2 }}>
-          <PrimaryButton type="submit">
-            Save Changes
-          </PrimaryButton>
-        </Box>
       </Stack>
     </Box>
   );

@@ -2,7 +2,7 @@ import React from 'react';
 import { Box, Typography, Grid, Button } from '@mui/material';
 import { Link as RouterLink } from 'react-router-dom';
 import { format } from 'date-fns';
-import { useMockDataContext } from '../context/MockDataContext';
+import { useMockDataContext } from '../contexts/MockDataContext';
 import { formatCurrency } from '../utils/invoiceUtils';
 import ReceiptIcon from '@mui/icons-material/Receipt';
 import AddCircleIcon from '@mui/icons-material/AddCircle';
